@@ -141,9 +141,6 @@ async def chunk_consumer(
                 break
 
             chunk_index = item[0]
-            if (chunk_index % 10000) == 0:
-                log.info(f'Started chunk: {chunk_index}!')
-
             chunk_value = item[1]
             try:
                 # filter chunk
