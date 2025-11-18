@@ -25,3 +25,6 @@ venv.bak/
 *.json
 *.jsonl
 corpus.txt
+
+# SBD
+charboundary
