@@ -234,6 +234,17 @@ CONFUSABLE_MAP = {
     'ә': 'ə',  'Ә': 'Ə',  'ǝ': 'ə',  'ɘ': 'ə'
 }
 
+ALLOWED_AZ_CHARS = {
+    # Azerbaijani Letters (Uppercase)
+    'A', 'B', 'C', 'Ç', 'D', 'E', 'Ə', 'F', 'G', 'Ğ','H', 'X', 'İ', 'I','J', 'K',
+    'Q', 'L', 'M', 'N', 'O', 'Ö', 'P', 'R', 'S', 'Ş', 'T', 'U', 'Ü', 'V', 'Y', 'Z',
+
+    # Azerbaijani Letters (Lowercase)
+    'a', 'b', 'c', 'ç', 'd', 'e', 'ə', 'f', 'g', 'ğ', 'h', 'x', 'ı', 'i', 'j', 'k',
+    'q', 'l', 'm', 'n', 'o', 'ö', 'p', 'r', 's', 'ş', 't', 'u', 'ü', 'v', 'y', 'z'
+
+}
+
 # Default list of common abbreviations that end with a period but don't end sentences
 DEFAULT_ABBREVIATIONS = [
     "A.",
