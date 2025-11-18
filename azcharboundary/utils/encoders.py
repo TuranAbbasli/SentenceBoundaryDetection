@@ -8,7 +8,6 @@ from charboundary.constants import (
     PUNCTUATION_CHAR_LIST,
     WS_CHAR_LIST,
     TERMINAL_SENTENCE_CHAR_LIST,
-    TERMINAL_PARAGRAPH_CHAR_LIST,
 )
 
 
@@ -68,8 +67,6 @@ class CharacterEncoder:
             value = 0
         elif char in TERMINAL_SENTENCE_CHAR_LIST:
             value = -1
-        elif char in TERMINAL_PARAGRAPH_CHAR_LIST:
-            value = -2
         elif char in WS_CHAR_LIST:
             value = -3
         elif char in PUNCTUATION_CHAR_LIST:
@@ -92,18 +89,6 @@ class CharacterEncoder:
             bool: True if the character can end a sentence, False otherwise
         """
         return char in TERMINAL_SENTENCE_CHAR_LIST
-
-    def is_terminal_paragraph_char(self, char: str) -> bool:
-        """
-        Check if a character can indicate the end of a paragraph.
-
-        Args:
-            char (str): The character to check
-
-        Returns:
-            bool: True if the character can end a paragraph, False otherwise
-        """
-        return char in TERMINAL_PARAGRAPH_CHAR_LIST
 
 
 class OneHotCharacterEncoder(CharacterEncoder):
