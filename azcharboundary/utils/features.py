@@ -757,7 +757,6 @@ class FeatureExtractor:
 
         # Get tag lengths
         sentence_len = len(SENTENCE_TAG)
-        paragraph_len = len(PARAGRAPH_TAG)
 
         while i < text_len:
             # Check for sentence tag
@@ -768,14 +767,7 @@ class FeatureExtractor:
                 if result:  # Mark the previous character
                     result[-1] = 1  # Binary classification: 1 for any boundary
                 i += sentence_len
-            # Check for paragraph tag
-            elif (
-                i + paragraph_len <= text_len
-                and text[i : i + paragraph_len] == PARAGRAPH_TAG
-            ):
-                if result:  # Mark the previous character
-                    result[-1] = 1  # Binary classification: 1 for any boundary
-                i += paragraph_len
+
             else:
                 # Regular character
                 result.append(0)
