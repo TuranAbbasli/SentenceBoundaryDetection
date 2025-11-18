@@ -8,7 +8,9 @@ import time
 from pathlib import Path
 
 from azcharboundary.segmenter import TextSegmenter
-from azcharboundary.utils.constants import SENTENCE_TAG
+from azcharboundary.utils.constants import (SENTENCE_TAG,
+                                            CONFUSABLE_MAP,
+                                            ALLOWED_AZ_CHARS)
 
 def preprocessing(data_dir: Path) -> list[dict]:
     """
@@ -46,7 +48,19 @@ def preprocessing(data_dir: Path) -> list[dict]:
             
             updated_sentences: list[str] = []
             for sentence in sentences:  # further splitting sentences of a chunk
-                updated_sentences.extend([s.strip() for s in sentence.split('\n')])
+                for s in sentence.split('\n'):
+                    s = s.strip()
+                    s = ''.join(CONFUSABLE_MAP.get(char, char) for char in s)  # fix confusables
+
+                    # check CharValidness of sentence
+                    valid_sentence = True
+                    for char in s:
+                        if char.isalpha():
+                            if char not in ALLOWED_AZ_CHARS:
+                                valid_sentence = False
+
+                    if valid_sentence:  # skip non-valid sentence
+                        updated_sentences.append(s)
 
             training_data = {
                 "input": " ".join(updated_sentences),
@@ -65,7 +79,8 @@ def demonstrate_basic_usage(data_dir: Path):
 
     preprocessed_data = preprocessing(data_dir)
     training_data = [item["output"] for item in preprocessed_data]
-
+    print(training_data[:5])
+    exit()
     # Train the segmenter
     print("Training segmenter...")
     t0 = time.time()
