@@ -25,7 +25,7 @@ def demonstrate_basic_usage(data_dir: Path):
     print(f"Training segmenter with {len(training_data)} training data.")
     t0 = time.time()
     metrics = segmenter.train(
-        data=training_data[:1000],
+        data=training_data,
         model_params={"n_estimators": 512, "max_depth": 64},
         sample_rate=0.001,  # Increase sample rate to get better class balance
         left_window=9,  # Specify window sizes during training
@@ -43,7 +43,7 @@ def demonstrate_basic_usage(data_dir: Path):
 
 def main():
     """Run the example script."""
-    data_dir = Path(r'azcharboundary\data\data.jsonl')
+    data_dir = Path(r'azcharboundary\data\train_data_v3.jsonl')
     demonstrate_basic_usage(data_dir)
 
 
