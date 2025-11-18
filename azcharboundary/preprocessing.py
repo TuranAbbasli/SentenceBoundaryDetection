@@ -48,7 +48,8 @@ def preprocessing(data_dir: Path) -> list[dict]:
                         if char.isalpha():
                             if char not in ALLOWED_AZ_CHARS:
                                 valid_sentence = False
-
+                                break
+                            
                     if valid_sentence:  # skip non-valid sentence
                         updated_sentences.append(s)
 
