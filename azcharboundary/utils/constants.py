@@ -2,6 +2,12 @@
 Constants used throughout the charboundary library.
 """
 
+AZ_ALPHABET = [
+    "a", "b", "c", "ç", "d", "e", "ə", "f", "g", "ğ", "h", "x",
+    "ı", "i", "j", "k", "q", "l", "m", "n", "o", "ö", "p", "r",
+    "s", "ş", "t", "u", "ü", "v", "y", "z"
+]
+
 # Punctuation list, including unicode
 PUNCTUATION_CHAR_LIST = frozenset(
     [
