@@ -14,7 +14,7 @@ if platform.system() == "Windows":
 #    export OPENAI_API_KEY="nvapi-xxxxxxxxxxxxxxxxxxxxxxxx"
 #    export OPENAI_BASE_URL="https://integrate.api.nvidia.com/v1"
 
-with open("api_keys.json" , "r", encoding='utf-8') as fl:
+with open("generation/api_keys.json" , "r", encoding='utf-8') as fl:
     api_keys_mapping = json.load(fl)
 
 NVIDIA_API_KEYS = []

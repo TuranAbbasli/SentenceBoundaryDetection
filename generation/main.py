@@ -50,7 +50,7 @@ def process_response(resp, consumer_id: int) -> Optional[list[int]]:
         results = json.loads(content)
 
         validated_results = model.Sbd_Output(results=results)
-        return results
+        return validated_results.results
     
     except ValidationError:
         log.warning(f"Validation error: {ValidationError}")
@@ -91,7 +91,7 @@ def get_processed_chunk_indexes() -> list[str]:
     chunk_idxs: list[str] = []
 
     chunk_producer_logger.info("started getting indexes of processed chunks.")
-    with open(OUTPUT_PATH, "r", encoding="utf-8") as f_processed:
+    with open(OUTPUT_PATH, "r", encoding="utf-8", errors="replace") as f_processed:
         for i, line in enumerate(f_processed, start=1):
             line = line.strip()
             if not line:
