@@ -18,7 +18,7 @@ def demonstrate_basic_usage():
     # Sample annotated text for training
 
     training_data = []
-    with gzip.open("data/train.jsonl.gz", "rt", encoding="utf-8") as input_file:
+    with gzip.open("charboundary/data/train.jsonl.gz", "rt", encoding="utf-8") as input_file:
         for i, line in enumerate(input_file):
             training_data.append(json.loads(line).get("text"))
             if i > 10000:

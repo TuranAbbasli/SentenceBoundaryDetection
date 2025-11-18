@@ -22,10 +22,10 @@ def demonstrate_basic_usage(data_dir: Path):
     training_data = [item["output"] for item in preprocessed_data]
 
     # Train the segmenter
-    print("Training segmenter...")
+    print(f"Training segmenter with {len(training_data)} training data.")
     t0 = time.time()
     metrics = segmenter.train(
-        data=training_data,
+        data=training_data[:1000],
         model_params={"n_estimators": 512, "max_depth": 64},
         sample_rate=0.001,  # Increase sample rate to get better class balance
         left_window=9,  # Specify window sizes during training
@@ -43,7 +43,6 @@ def demonstrate_basic_usage(data_dir: Path):
 
 def main():
     """Run the example script."""
-    print("CharBoundary Library Example\n")
     data_dir = Path(r'azcharboundary\data\data.jsonl')
     demonstrate_basic_usage(data_dir)
 
