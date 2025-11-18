@@ -86,9 +86,9 @@ async def call_model(nv: NvidiaClient, chunk: str, consumer_id: int) -> Optional
     else:
         return None
 
-def get_processed_chunk_indexes() -> list[str]:
+def get_processed_chunk_indexes() -> set[str]:
     """Returns indexes of processed chunks which are saved in OUTPUT_PATH"""
-    chunk_idxs: list[str] = []
+    chunk_idxs: set[str] = set()
 
     chunk_producer_logger.info("started getting indexes of processed chunks.")
     with open(OUTPUT_PATH, "r", encoding="utf-8", errors="replace") as f_processed:
@@ -104,7 +104,7 @@ def get_processed_chunk_indexes() -> list[str]:
             
             for key in data.keys():
                 if key.startswith("chunk_"):
-                    chunk_idxs.append(key)
+                    chunk_idxs.add(key)
     chunk_producer_logger.info(f"finished getting indexes of processed chunks. Count: {len(chunk_idxs)}")
 
     return chunk_idxs
@@ -149,7 +149,7 @@ async def chunk_consumer(
                     if result:
                         break
 
-                result_dict = {f'chunk_{chunk_index}': result, 'original_chunk': chunk_value}
+                result_dict = {f'{chunk_index}': result, 'original_chunk': chunk_value}
                 await append_jsonl(out_path, result_dict)
                 log.info('chunk has been saved!')
 
