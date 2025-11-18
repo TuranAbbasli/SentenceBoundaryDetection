@@ -9,12 +9,12 @@ from typing import Type, TYPE_CHECKING
 
 from skops.io import dump, load
 
-from charboundary.constants import DEFAULT_ABBREVIATIONS
-from charboundary.encoders import CharacterEncoder
-from charboundary.features import FeatureExtractor
+from azcharboundary.utils.constants import DEFAULT_ABBREVIATIONS
+from azcharboundary.utils.encoders import CharacterEncoder
+from azcharboundary.utils.features import FeatureExtractor
 
 if TYPE_CHECKING:
-    from charboundary.segmenters.base import TextSegmenter
+    from azcharboundary.segmenter import TextSegmenter
 
 
 class ModelIO:

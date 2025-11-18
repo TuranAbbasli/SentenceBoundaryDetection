@@ -8,11 +8,11 @@ from typing import List, Union, Optional, TYPE_CHECKING
 
 import sklearn.metrics
 
-from charboundary.features import PositionLabels
-from charboundary.segmenters.types import MetricsResult
+from azcharboundary.utils.features import PositionLabels
+from azcharboundary.utils.types import MetricsResult
 
 if TYPE_CHECKING:
-    from charboundary.segmenters.base import TextSegmenter
+    from azcharboundary.segmenter import TextSegmenter
 
 
 class Evaluator:
