@@ -388,65 +388,6 @@ class TextSegmenter:
     def text_segmenter():
         pass
     
-    # Abbreviation management
-    def get_abbreviations(self) -> List[str]:
-        """
-        Get the current list of abbreviations.
-
-        Returns:
-            List[str]: The current list of abbreviations
-        """
-        return sorted(list(self.config.abbreviations))
-
-    def add_abbreviation(self, abbreviation: str) -> None:
-        """
-        Add a new abbreviation to the list.
-
-        Args:
-            abbreviation (str): The abbreviation to add (must end with a period)
-        """
-        if not abbreviation.endswith("."):
-            abbreviation = abbreviation + "."
-
-        # Update both the segmenter's abbreviation list and the feature extractor's
-        self.config.abbreviations.append(abbreviation)
-        self.feature_extractor.abbreviations.add(abbreviation)
-
-    def remove_abbreviation(self, abbreviation: str) -> bool:
-        """
-        Remove an abbreviation from the list.
-
-        Args:
-            abbreviation (str): The abbreviation to remove
-
-        Returns:
-            bool: True if the abbreviation was removed, False if it wasn't in the list
-        """
-        if not abbreviation.endswith("."):
-            abbreviation = abbreviation + "."
-
-        if abbreviation in self.config.abbreviations:
-            self.config.abbreviations.remove(abbreviation)
-            if abbreviation in self.feature_extractor.abbreviations:
-                self.feature_extractor.abbreviations.remove(abbreviation)
-            return True
-        return False
-
-    def set_abbreviations(self, abbreviations: List[str]) -> None:
-        """
-        Set the complete list of abbreviations, replacing the current list.
-
-        Args:
-            abbreviations (List[str]): The new list of abbreviations
-        """
-        # Ensure all abbreviations end with periods
-        self.config.abbreviations = [
-            abbr if abbr.endswith(".") else abbr + "." for abbr in abbreviations
-        ]
-
-        # Update the feature extractor's abbreviations
-        self.feature_extractor.abbreviations = set(self.config.abbreviations)
-
     # Evaluation methods
     def evaluate(
         self, data: Union[str, List[str]], max_samples: Optional[int] = None
