@@ -185,11 +185,13 @@ TERMINAL_SENTENCE_CHAR_LIST = frozenset(
         # other punctuation marks
         ":",  # colon (can end sentences in certain contexts)
         "...",  # ellipsis (can indicate a trailing off or incomplete thought)
+        "\n",  # newline character (common in text files)
+        "\r",  # carriage return (used in some text formats)
     ]
 )
 
 # Primary terminators - more likely to end sentences
-PRIMARY_TERMINATORS = frozenset([".", "!", "?"])
+PRIMARY_TERMINATORS = frozenset([".", "!", "?", "\n", "\r"])
 
 # Secondary terminators - less likely to end sentences on their own
 SECONDARY_TERMINATORS = frozenset(['"', "\u201d", "'", "\u2019", ";", ":"])
@@ -200,20 +202,8 @@ OPENING_QUOTES = frozenset(['"', "\u201c", "'", "\u2018"])
 # Closing quotation marks
 CLOSING_QUOTES = frozenset(['"', "\u201d", "'", "\u2019"])
 
-# list of characters that can indicate the end of a paragraph
-TERMINAL_PARAGRAPH_CHAR_LIST = frozenset(
-    [
-        # characters that can end a paragraph
-        "\n",  # newline character (common in text files)
-        "\r",  # carriage return (used in some text formats)
-        # terminal sentence characters can also indicate end of paragraph
-        # if they appear at the end of a line
-    ]
-)
-
 # Annotation tags
 SENTENCE_TAG = "<|sentence|>"
-PARAGRAPH_TAG = "<|paragraph|>"
 
 # Default list of common abbreviations that end with a period but don't end sentences
 DEFAULT_ABBREVIATIONS = [
@@ -2175,93 +2165,92 @@ DEFAULT_ABBREVIATIONS = [
 
 # Enumeration patterns - used to detect list items
 LIST_MARKERS = [
-    "(1)",
-    "(2)",
-    "(3)",
-    "(4)",
-    "(5)",
-    "(6)",
-    "(7)",
-    "(8)",
-    "(9)",
-    "(10)",
-    "(i)",
-    "(ii)",
-    "(iii)",
-    "(iv)",
-    "(v)",
-    "(vi)",
-    "(vii)",
-    "(viii)",
-    "(ix)",
-    "(x)",
-    "(a)",
-    "(b)",
-    "(c)",
-    "(d)",
-    "(e)",
-    "(f)",
-    "(g)",
-    "(h)",
-    "(i)",
-    "(j)",
-    "1.",
-    "2.",
-    "3.",
-    "4.",
-    "5.",
-    "6.",
-    "7.",
-    "8.",
-    "9.",
-    "10.",
-    "a.",
-    "b.",
-    "c.",
-    "d.",
-    "e.",
-    "f.",
-    "g.",
-    "h.",
-    "i.",
-    "j.",
-    "i.",
-    "ii.",
-    "iii.",
-    "iv.",
-    "v.",
-    "vi.",
-    "vii.",
-    "viii.",
-    "ix.",
-    "x.",
-    "•",
-    "·",
-    "○",
-    "●",
-    "■",
-    "□",
-    "▪",
-    "▫",
+    # Numbered markers (parentheses)
+    "(1)", "(2)", "(3)", "(4)", "(5)", "(6)", "(7)", "(8)", "(9)", "(10)",
+
+    # Roman numerals (parentheses)
+    "(i)", "(ii)", "(iii)", "(iv)", "(v)", "(vi)", "(vii)", "(viii)", "(ix)", "(x)",
+
+    # Letter markers (parentheses)
+    "(a)", "(b)", "(c)", "(d)", "(e)", "(f)", "(g)", "(h)", "(i)", "(j)",
+
+    # Numbered markers (period)
+    "1.", "2.", "3.", "4.", "5.", "6.", "7.", "8.", "9.", "10.",
+
+    # Letter markers (period)
+    "a.", "b.", "c.", "ç.", "d.", "e.", "ə.", "f.", "g.", "h.", "i.", "j.",
+
+    # Roman numerals (period)
+    "i.", "ii.", "iii.", "iv.", "v.", "vi.", "vii.", "viii.", "ix.", "x.",
+
+    # Numbered markers (closing parenthesis)
+    "1)", "2)", "3)", "4)", "5)", "6)", "7)", "8)", "9)", "10)",
+
+    # Letter markers (closing parenthesis)
+    "a)", "b)", "c)", "ç)", "d)", "e)", "ə)", "f)", "g)", "h)", "i)", "j)",
+
+    # Bullet symbols
+    "•", "·", "○", "●", "■", "□", "▪", "▫",
 ]
 
 # Conjunction patterns that often appear in the last item of a list
 LIST_CONJUNCTIONS = [
-    " and ",
-    " or ",
-    " and/or ",
-    " as well as ",
+    # Basic conjunctions
+    " və ",              # and
+    " və ya ",           # or
+    " ya da ",           # or
+    " yaxud ",           # or
+    " eləcə də ",        # as well as
+    " həmçinin ",        # also / as well
+
+    # Less formal / conversational variants
+    " bir də ",          # also / and (colloquial)
+    " üstəlik ",         # moreover / in addition
 ]
 
-# Typical list introduction patterns
 LIST_INTROS = [
-    "following:",
-    "as follows:",
-    "include:",
-    "including:",
-    "such as:",
-    "namely:",
-    "listed below:",
-    "items below:",
-    "the following items:",
+    # Direct translations
+    "aşağıdakı:",                     # following:
+    "aşağıdakı kimi:",                # as follows:
+    "aşağıdakıların siyahısı:",       # the following items:
+    "aşağıdakılar:",                  # the following:
+    "aşağıda göstərilənlər:",         # items listed below:
+    "aşağıda sadalananlar:",          # listed below:
+    "aşağıda qeyd edilənlər:",        # items below:
+    "daxildir:",                      # include:
+    "daxil olmaqla:",                 # including:
+    "o cümlədən:",                    # including / inter alia:
+    "məsələn:",                       # such as:
+    "yəni:",                           # namely:
+
+    # Legal/administrative Azerbaijani formal patterns
+    "aşağıdakılar müəyyən edilir:",   # the following are established:
+    "aşağıdakılar tətbiq olunur:",    # the following apply:
+    "aşağıdakılar nəzərdə tutulur:",  # the following are envisaged:
+    "aşağıdakılar tənzimləyir:",      # the following regulate:
+    "aşağıdakılar müəyyən edilir ki:",# it is determined as follows:
+    "bu Qaydalara əsasən aşağıdakılar:", # according to these rules, the following:
+    "bəyan olunur ki:",               # it is declared that:
+    "tələb olunur ki:",               # it is required that:
+    "müəyyən edilir ki:",             # it is determined that:
+    "qeyd olunur ki:",                # it is noted that:
+
+    # Contract / procurement / SBD-specific phrasing
+    "bu sənədə əsasən aşağıdakılar:", # pursuant to this document:
+    "bu bölmədə aşağıdakılar göstərilir:", # in this section:
+    "aşağıdakı şərtlər tətbiq olunur:",    # the following conditions apply:
+    "aşağıdakı tələblər yerinə yetirilməlidir:", # the following requirements must be met:
+    "aşağıdakı sənədlər təqdim edilməlidir:",    # the following documents must be submitted:
+    "tərəflər aşağıdakılar barədə razıdır:",     # parties agree on the following:
+    "işlər aşağıdakılardan ibarətdir:",         # works consist of the following:
+
+    # Extended variants typical in laws/regulations
+    "aşağıdakı hallarda:",               # in the following cases:
+    "aşağıdakı əsaslarla:",              # on the following grounds:
+    "aşağıdakılar çərçivəsində:",        # within the following framework:
+    "aşağıdakı məlumatlar:",             # the following information:
+    "aşağıdakı müddəalar:",              # the following provisions:
+    "aşağıdakı kateqoriyalar:",          # the following categories:
+    "aşağıdakı öhdəliklər:",             # the following obligations:
+    "aşağıdakı hüquqlar:",               # the following rights:
 ]
