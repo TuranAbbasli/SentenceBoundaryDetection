@@ -4,7 +4,8 @@ Character encoding functionality for the charboundary library.
 
 from typing import Dict, Protocol
 
-from charboundary.constants import (
+from azcharboundary.utils.constants import (
+    AZ_ALPHABET,
     PUNCTUATION_CHAR_LIST,
     WS_CHAR_LIST,
     TERMINAL_SENTENCE_CHAR_LIST,
@@ -44,6 +45,7 @@ class CharacterEncoder:
     def __init__(self):
         """Initialize the CharacterEncoder with an empty cache."""
         self.cache: Dict[str, int] = {}
+        self.az_map = {char: idx + 1 for idx, char in enumerate(AZ_ALPHABET)}
 
     def encode(self, char: str) -> int:
         """
@@ -62,7 +64,10 @@ class CharacterEncoder:
 
         # Encode based on character type
         if char.isalpha():
-            value = ord(char.lower()) - ord("a") + 1
+            if char == 'İ':  # special case: 'İ'.lower() != 'i'
+                value = self.az_map['i']
+            else:
+                value = self.az_map[char.lower()]
         elif char.isdigit():
             value = 0
         elif char in TERMINAL_SENTENCE_CHAR_LIST:
