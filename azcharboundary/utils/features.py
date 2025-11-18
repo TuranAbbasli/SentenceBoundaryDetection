@@ -16,9 +16,8 @@ try:
 except ImportError:
     NUMPY_AVAILABLE = False
 
-from charboundary.constants import (
+from azcharboundary.utils.constants import (
     SENTENCE_TAG,
-    PARAGRAPH_TAG,
     TERMINAL_SENTENCE_CHAR_LIST,
     DEFAULT_ABBREVIATIONS,
     PRIMARY_TERMINATORS,
@@ -30,7 +29,7 @@ from charboundary.constants import (
     LIST_CONJUNCTIONS,
     LIST_INTROS,
 )
-from charboundary.encoders import CharacterEncoder, CharacterEncoderProtocol
+from azcharboundary.utils.encoders import CharacterEncoder, CharacterEncoderProtocol
 
 # Type aliases for better readability
 FeatureVector: TypeAlias = List[int]
