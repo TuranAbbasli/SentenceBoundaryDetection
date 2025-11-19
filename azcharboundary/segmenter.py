@@ -1,7 +1,7 @@
 """
 Base text segmentation functionality for the charboundary library.
 """
-
+import time
 import random
 from functools import lru_cache
 from typing import List, Dict, Any, Optional, Union, Iterator, Tuple, ClassVar
@@ -387,9 +387,60 @@ class TextSegmenter:
         """
         return ModelIO.load(path, cls, use_skops, trust_model)
 
-    def text_segmenter():
-        pass
-    
+    def inference(self, text: str, threshold: Optional[float] = None):
+        """
+        Segment text into sentences and paragraphs.
+
+        Args:
+            text (str): Text to segment
+            threshold (float, optional): Probability threshold for classification (0.0-1.0).
+                                        Values below 0.5 favor recall (fewer false negatives),
+                                        values above 0.5 favor precision (fewer false positives).
+                                        If None, use the model's default threshold.
+                                        Defaults to None.
+
+        Returns:
+            str: Text with sentence annotations
+        """
+        if not self.is_trained:
+            raise ValueError("Model has not been trained yet.")
+        
+        # Use the model's threshold if none is provided
+        threshold_to_use = threshold if threshold is not None else self.config.threshold
+
+        # Extract features for terminal characters only - optimized approach
+        terminal_indices: list[int] = []
+
+        # Pre-identify all terminal characters to batch process them
+        for i, char in enumerate(text):
+            if char in TERMINAL_SENTENCE_CHAR_LIST:
+                terminal_indices.append(i)
+
+        # Skip feature extraction if no terminal characters found
+        if not terminal_indices:
+            return text
+        
+        terminal_features = self.feature_extractor.get_char_features(
+            text,
+            self.config.left_window,
+            self.config.right_window,
+            positions=terminal_features,
+        )
+
+        predictions: list[int] = self.model.predict(terminal_features, threshold=threshold_to_use)
+
+        # Optimization: only create result list if we have boundaries
+        if not any(predictions):
+            return text
+        
+        result = list(text)
+
+        for idx, prediction in enumerate(predictions):
+            if prediction:
+                result.insert(idx + 1, SENTENCE_TAG)
+
+        return "".join(result)
+
     # Evaluation methods
     def evaluate(
         self, data: Union[str, List[str]], max_samples: Optional[int] = None
