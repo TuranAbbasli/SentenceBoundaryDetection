@@ -5,6 +5,7 @@ import time
 import random
 from functools import lru_cache
 import skops.io as sio
+from zipfile import ZIP_DEFLATED
 from typing import List, Dict, Any, Optional, Union, ClassVar
 
 from azcharboundary.utils.constants import (
@@ -364,7 +365,7 @@ class TextSegmenter:
                                               Defaults to 9.
         """
         if compress:
-            sio.dump(obj=self.model, file=path, compresslevel=compression_level)
+            sio.dump(obj=self.model, file=path, compression=ZIP_DEFLATED, compresslevel=compression_level)
         else:
             sio.dump(obj=self.model, file=path)
 
