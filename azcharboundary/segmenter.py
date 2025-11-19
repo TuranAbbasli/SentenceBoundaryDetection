@@ -4,7 +4,8 @@ Base text segmentation functionality for the charboundary library.
 import time
 import random
 from functools import lru_cache
-from typing import List, Dict, Any, Optional, Union, Iterator, Tuple, ClassVar
+import skops.io as sio
+from typing import List, Dict, Any, Optional, Union, ClassVar
 
 from azcharboundary.utils.constants import (
     SENTENCE_TAG,
@@ -21,7 +22,6 @@ from azcharboundary.utils.features import (
 from azcharboundary.utils.models import create_model, TextSegmentationModel
 
 from azcharboundary.utils.types import SegmenterConfig, MetricsResult
-from azcharboundary.utils.model_io import ModelIO
 from azcharboundary.utils.evaluation import Evaluator
 
 # Segmentation tuning parameters
@@ -351,7 +351,6 @@ class TextSegmenter:
     def save(
         self,
         path: str,
-        format: str = "skops",
         compress: bool = True,
         compression_level: int = 9,
     ) -> None:
@@ -360,18 +359,18 @@ class TextSegmenter:
 
         Args:
             path (str): Path to save the model
-            format (str, optional): Serialization format to use ('skops' or 'pickle').
-                                    Defaults to 'skops' for secure serialization.
             compress (bool, optional): Whether to use compression. Defaults to True.
             compression_level (int, optional): Compression level (0-9, where 9 is highest).
                                               Defaults to 9.
         """
-        ModelIO.save(self, path, format, compress, compression_level)
+        if compress:
+            sio.dump(obj=self.model, file=path, compresslevel=compression_level)
+        else:
+            sio.dump(obj=self.model, file=path)
 
-    @classmethod
     def load(
-        cls, path: str, use_skops: bool = True, trust_model: bool = False
-    ) -> "TextSegmenter":
+        self, path: str, trust_model: bool = False
+    ) -> None:
         """
         Load a model and configuration from a file.
 
@@ -381,11 +380,13 @@ class TextSegmenter:
             trust_model (bool, optional): Whether to trust all types in the model file.
                                          Set to True only if you trust the source of the model file.
                                          Defaults to False.
-
-        Returns:
-            TextSegmenter: Loaded TextSegmenter instance
         """
-        return ModelIO.load(path, cls, use_skops, trust_model)
+        if trust_model:
+            self.model = sio.load(file=path, trusted=True)
+            self.is_trained = True
+        else:
+            self.model = sio.load(file=path, trusted=["azcharboundary.utils.models.BinaryRandomForestModel"])
+            self.is_trained = True
 
     def inference(self, text: str, threshold: Optional[float] = None):
         """
@@ -424,7 +425,7 @@ class TextSegmenter:
             text,
             self.config.left_window,
             self.config.right_window,
-            positions=terminal_features,
+            positions=terminal_indices,
         )
 
         predictions: list[int] = self.model.predict(terminal_features, threshold=threshold_to_use)
