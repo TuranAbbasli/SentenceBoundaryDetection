@@ -3,6 +3,8 @@ import re
 from typing import List, Dict, Optional
 import logging
 
+from constants import CONFUSABLE_MAP, ALLOWED_AZ_CHARS
+
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
@@ -23,6 +25,30 @@ def clean_sentence(text: str) -> str:
     text = re.sub(r"\s{2,}", " ", text)
     return text.strip()
 
+def fix_unicode_encodings(text: str) -> Optional[str]:
+    """
+    Fixes confusable unicode encodings.
+
+    Args:
+        text (str): a text
+
+    Returns:
+        (str): Unicode encoding fixed text
+    """
+    text = ''.join(CONFUSABLE_MAP.get(char, char) for char in text)  # fix confusables
+
+    # check CharValidness of sentence
+    valid_sentence = True
+    for char in text:
+        if char.isalpha():
+            if char not in ALLOWED_AZ_CHARS:
+                valid_sentence = False
+                break
+                            
+    if valid_sentence:  # skip non-valid sentence
+        return text
+    
+    return None
 
 def has_terminal(text: str) -> bool:
     """
@@ -112,7 +138,11 @@ def load_and_clean_raw_data(input_path: str) -> List[str]:
             for sent in chunk:
                 cleaned = clean_sentence(sent)
 
-                if cleaned and has_terminal(cleaned):
+                fixed = fix_unicode_encodings(cleaned)
+                if not fixed: # skip non-valid sentences
+                    continue
+
+                if cleaned and has_terminal(fixed):
                     # Append sentence tag
                     if not cleaned.endswith("<|sentence|>"):
                         cleaned = cleaned.rstrip() + "<|sentence|>"

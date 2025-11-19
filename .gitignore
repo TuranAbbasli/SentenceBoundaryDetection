@@ -1,0 +1,15 @@
+**/__pycache__/
+*.log
+*.json
+*.jsonl
+
+data
+corpus.txt
+charboundary
+
+azcharboundary
+generation
+
+venv
+.venv
+.emv
