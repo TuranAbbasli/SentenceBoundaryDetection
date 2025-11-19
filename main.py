@@ -63,12 +63,20 @@ def demonstrate_basic_usage(data_dir: Path, save_dir: str):
 
     print(f"Evaluation on test set sized {len(test_set)}.")
     evaluation_start = time.time()
-    test_metrics = segmenter.evaluate(
+    evaluation_metrics = segmenter.evaluate(
         data=test_set,                          
         max_samples=None,
     )
+
+    # Display evaluation metrics
+    print(f"Evaluation metrics:")
+    print(f"  Overall accuracy:       {evaluation_metrics.get('accuracy', 0):.4f}")
+    print(f"  Boundary accuracy:      {evaluation_metrics.get('boundary_accuracy', 0):.4f}")
+    print(f"  Boundary precision:     {evaluation_metrics.get('precision', 0):.4f}")
+    print(f"  Boundary recall:        {evaluation_metrics.get('recall', 0):.4f}")
+    print(f"  Boundary F1-score:      {evaluation_metrics.get('f1_score', 0):.4f}")
     print("Evaluation completed in {:.2f} seconds.".format(time.time() - evaluation_start))
-    print("Test metrics:", test_metrics)
+    
 
     save_start = time.time()
     segmenter.save(path=save_dir)
