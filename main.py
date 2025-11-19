@@ -28,7 +28,7 @@ def train_test_split(data: list, ratio: int = 0.2) -> tuple[list, list]:
 
     return train_set, test_set
 
-def demonstrate_basic_usage(data_dir: Path, save_dir: str):
+def demonstrate_basic_usage(data_dir: Path, save_dir: str): 
     """Demonstrate basic usage of the CharBoundary library."""
     # Create a segmenter
     segmenter = TextSegmenter()

@@ -5,7 +5,7 @@ Type definitions for the segmenters module.
 from dataclasses import dataclass, field
 from typing import List, Dict, Any, Optional, Union, Protocol, TypedDict
 
-from charboundary.constants import DEFAULT_ABBREVIATIONS
+from azcharboundary.utils.constants import DEFAULT_ABBREVIATIONS
 
 
 class MetricsResult(TypedDict):
