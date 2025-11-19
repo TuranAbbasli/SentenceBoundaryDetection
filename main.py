@@ -9,7 +9,7 @@ from pathlib import Path
 
 from azcharboundary.segmenter import TextSegmenter
 
-def demonstrate_basic_usage(data_dir: Path):
+def demonstrate_basic_usage(data_dir: Path, save_dir: str):
     """Demonstrate basic usage of the CharBoundary library."""
     # Create a segmenter
     segmenter = TextSegmenter()
@@ -19,7 +19,7 @@ def demonstrate_basic_usage(data_dir: Path):
     with open(data_dir, "r", encoding="utf-8", errors="replace") as f:
         preprocessed_data = [json.loads(line) for line in f]
 
-    training_data = [item["output"] for item in preprocessed_data]
+    training_data = [item["text"] for item in preprocessed_data]
 
     # Train the segmenter
     print(f"Training segmenter with {len(training_data)} training data.")
@@ -41,10 +41,18 @@ def demonstrate_basic_usage(data_dir: Path):
     print(f"  Boundary recall:        {metrics.get('recall', 0):.4f}")
     print(f"  Boundary F1-score:      {metrics.get('f1_score', 0):.4f}")
 
+    save_start = time.time()
+    segmenter.save(path=save_dir)
+    save_end = time.time()
+    print('Time took to save model: {:.2f}'.format(save_end-save_start))
+
+
 def main():
     """Run the example script."""
-    data_dir = Path(r'azcharboundary\data\train_data_v3.jsonl')
-    demonstrate_basic_usage(data_dir)
+    data_dir = Path(r'azcharboundary\data\train_data_v3_fixed.jsonl')
+    save_dir = "azcharboundary/models/models.xz"
+
+    demonstrate_basic_usage(data_dir, save_dir)
 
 
 if __name__ == "__main__":
