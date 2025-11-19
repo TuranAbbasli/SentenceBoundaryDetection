@@ -224,11 +224,13 @@ class TextSegmenter:
         features: FeatureMatrix = []
         labels: PositionLabels = []
 
-        if isinstance(data, list):
-            for i, text in enumerate(data):
-                if max_samples is not None and i >= max_samples:
-                    break
-                self._process_text_for_training(text, features, labels, sample_rate)
+        start = time.time()
+        for i, text in enumerate(data):
+            if max_samples is not None and i >= max_samples:
+                break
+            self._process_text_for_training(text, features, labels, sample_rate)
+        end = time.time()
+        print('Feature extraction finished! Time took: {:.2f}'.format(end-start))
 
         # Create and train the model
         if self.config.use_feature_selection:
