@@ -28,8 +28,8 @@ def demonstrate_basic_usage(data_dir: Path, save_dir: str):
         data=training_data,
         model_params={"n_estimators": 512, "max_depth": 64},
         sample_rate=0.001,  # Increase sample rate to get better class balance
-        left_window=9,  # Specify window sizes during training
-        right_window=9
+        left_window=5,  # Specify window sizes during training
+        right_window=5
     )
     print("Training completed in {:.2f} seconds.".format(time.time() - t0))
     
@@ -50,7 +50,7 @@ def demonstrate_basic_usage(data_dir: Path, save_dir: str):
 def main():
     """Run the example script."""
     data_dir = Path(r'azcharboundary\data\train_data_v3_fixed.jsonl')
-    save_dir = "azcharboundary/models/models.xz"
+    save_dir = "azcharboundary/models/model_v1.xz"
 
     demonstrate_basic_usage(data_dir, save_dir)
 
