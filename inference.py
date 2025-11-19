@@ -23,7 +23,8 @@ def run_case(segmenter: TextSegmenter, text: str, case_name: str = "Testing!"):
 
     print(f"--- Inference time: {inference_time_ms:.2f} ms ---")
     print("--- Segmentation results ---")
-    print(output)
+    print(f'Input: {text}\n')
+    print(f'Output: {output}\n')
 
 
 def test_inference(model_dir: str):
