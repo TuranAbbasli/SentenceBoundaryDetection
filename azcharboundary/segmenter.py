@@ -437,9 +437,11 @@ class TextSegmenter:
         
         result = list(text)
 
-        for idx, prediction in enumerate(predictions):
+        tag_shift = 1
+        for prediction, terminal_idx in zip(predictions, terminal_indices):
             if prediction:
-                result.insert(idx + 1, SENTENCE_TAG)
+                result.insert(terminal_idx + tag_shift, SENTENCE_TAG)
+                tag_shift += 1
 
         return "".join(result)
 
