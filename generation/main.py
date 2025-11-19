@@ -193,6 +193,9 @@ async def main():
     # random.shuffle(data)
     logger.info("=== Chunks have been generated ===")
     logger.info(f"chunk count: {len(chunks)}")
+    
+    random.shuffle(chunks)
+    logger.info("Chunks have been shuffled!")
 
     # Queues
     chunk_queue: asyncio.Queue = asyncio.Queue(maxsize=MAX_CONCURRENT_BATCHES)
