@@ -5,6 +5,7 @@ Example script to demonstrate the usage of the CharBoundary library.
 
 import json
 import time
+import random
 from pathlib import Path
 
 from azcharboundary.segmenter import TextSegmenter
@@ -33,11 +34,10 @@ def demonstrate_basic_usage(data_dir: Path, save_dir: str):
     # Create a segmenter
     segmenter = TextSegmenter()
     
-    # Sample annotated text for training
-
     with open(data_dir, "r", encoding="utf-8", errors="replace") as f:
         preprocessed_data = [json.loads(line) for line in f]
-
+    random.shuffle(preprocessed_data)
+    
     datas = [item["text"] for item in preprocessed_data]
     train_set, test_set = train_test_split(datas)
 

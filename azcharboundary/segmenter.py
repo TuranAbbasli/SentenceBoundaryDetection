@@ -363,7 +363,7 @@ class TextSegmenter:
 
         Args:
             path (str): Path to save the model.
-            serialization_format (str): Format of serialization
+            serialization_format (str): Format of serialization ['treelite', 'skops']
             compress (bool, optional): Whether to use compression. Defaults to True.
             compression_level (int, optional): Compression level (0-9, where 9 is highest).
                                               Defaults to 9.
