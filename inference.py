@@ -29,7 +29,10 @@ def test_inference(model_dir: str):
     """Inference test over multiple cases"""
 
     segmenter = TextSegmenter()
+
+    load_start = time.time()
     segmenter.load(model_dir)
+    print("Model has been loaded! Time took: {:.2f}".format(time.time() - load_start))
 
     # CASE 1 — Legal domain
     text_legal = (
@@ -148,5 +151,5 @@ def test_inference(model_dir: str):
 
 
 if __name__ == "__main__":
-    model_path = "azcharboundary/models/model_v1.xz"
+    model_path = "azcharboundary/models/model_v1.tl"
     test_inference(model_dir=model_path)

@@ -371,8 +371,8 @@ class TextSegmenter:
         model = self.model.get_model()
 
         if serialization_format.lower() == "treelite":        
-            tl_model = treelite.sklearn.import_model(model)
-            tl_model.save(path)
+            model = treelite.sklearn.import_model(model)
+            model.serialize(path)
 
         else:
             if compress:

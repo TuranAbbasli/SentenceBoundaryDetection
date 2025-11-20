@@ -150,7 +150,18 @@ class BinaryRandomForestModel:
 
             probs = self.inference_predictor.predict(dmat)
 
-            return [1 if p >= thresh else 0 for p in probs]
+            result: list[int] = []
+            for prob in probs:
+                class_probs = prob[0]     # probability pairs. Sum of items is 1
+                prob_0 = class_probs[0]   # probability of class 0
+                prob_1 = class_probs[1]   # probability of class 1
+                
+                if prob_0 > prob_1:
+                    result.append(0)
+                else:
+                    result.append(1)
+
+            return result
 
         # Fallback: use normal predict (sklearn)
         return self.predict(X, threshold=threshold)
@@ -412,7 +423,19 @@ class FeatureSelectedRandomForestModel(BinaryRandomForestModel):
             X_np = np.asarray(X, dtype=np.float32)
             dmat = tl2cgen.DMatrix(X_np)
             probs = self.inference_predictor.predict(dmat)
-            return [1 if p >= thresh else 0 for p in probs]
+
+            result: list[int] = []
+            for prob in probs:
+                class_probs = prob[0]     # probability pairs. Sum of items is 1
+                prob_0 = class_probs[0]   # probability of class 0
+                prob_1 = class_probs[1]   # probability of class 1
+                
+                if prob_0 > prob_1:
+                    result.append(0)
+                else:
+                    result.append(1)
+
+            return result
 
         # Fallback: use the existing sklearn-based predict
         return self.predict(X, threshold=threshold)
