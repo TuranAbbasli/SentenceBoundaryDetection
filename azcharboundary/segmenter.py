@@ -392,7 +392,16 @@ class TextSegmenter:
             trust_model (bool, optional): Whether to trust all types in the model file.
                                          Set to True only if you trust the source of the model file.
                                          Defaults to False.
-        """       
+        """
+        # initalize new model
+        self.model = create_model(
+            model_type="feature_selected_rf",
+            threshold=self.config.threshold,
+            feature_selection_threshold=self.config.feature_selection_threshold,
+            max_features=self.config.max_features,
+            **(self.config.model_params),
+        )
+        
         if path.endswith('.skops'):
             if trust_model:
                 model = sio.load(file=path, trusted=True)
@@ -403,13 +412,13 @@ class TextSegmenter:
             self.is_trained = True
         
         elif path.endswith('.tl'):
-            model = treelite.Model.load(path, model_format="treelite")
-
+            model = treelite.Model.deserialize(path)
             self.model.set_inference_predictor(inference_model=model)
 
             self.is_trained = True
         else:
             print(f"Wrong format model! Path: {path}")
+            exit()
 
     def inference(self, text: str, threshold: Optional[float] = None):
         """
