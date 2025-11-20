@@ -451,7 +451,14 @@ class TextSegmenter:
             positions=terminal_indices,
         )
 
-        predictions: list[int] = self.model.predict(terminal_features, threshold=threshold_to_use)
+        if hasattr(self.model, "inference_predict"):
+            predictions: list[int] = self.model.inference_predict(
+                terminal_features, threshold=threshold_to_use
+            )
+        else:
+            predictions: list[int] = self.model.predict(
+                terminal_features, threshold=threshold_to_use
+            )
 
         # Optimization: only create result list if we have boundaries
         if not any(predictions):
