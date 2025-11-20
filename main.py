@@ -10,7 +10,7 @@ from pathlib import Path
 
 from azcharboundary.segmenter import TextSegmenter
 
-def train_test_split(data: list, ratio: int = 0.2) -> tuple[list, list]:
+def train_test_split(data: list, ratio: int = 0.2, shuffle: bool = True) -> tuple[list, list]:
     """
     Splits loaded data into train and test sets.
 
@@ -24,6 +24,9 @@ def train_test_split(data: list, ratio: int = 0.2) -> tuple[list, list]:
     data_len = len(data)
     splitting_idx = int(data_len * ratio)
 
+    if shuffle:
+        random.shuffle(data)
+        
     test_set: list = data[:splitting_idx]
     train_set: list = data[splitting_idx:]
 
