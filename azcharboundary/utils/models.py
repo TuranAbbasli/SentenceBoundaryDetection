@@ -103,26 +103,15 @@ class BinaryRandomForestModel:
         return self.model
     
     def set_inference_predictor(self, inference_model: Any) -> None:
-        def _treelite_libname():
-            system = platform.system().lower()
-            if system == "windows":
-                return "rf_model.dll", "msvc"
-            elif system == "darwin":
-                return "rf_model.dylib", "clang"
-            return "rf_model.so", "gcc"
-        
-        libname, toolchain = _treelite_libname()
-
-        inference_model.export_lib(
-            toolchain=toolchain,
-            libpath=libname,
+        tl2cgen.export_lib(
+            inference_model,
             params={"parallel_comp": 4},
+            toolchain="gcc",
+            libpath="./predictor.so",
+            nthread=4
         )
 
-        predictor = treelite_runtime.Predictor(
-            libpath=libname,
-            verbose=False
-        )
+        predictor = tl2cgen.Predictor("./predictor.so")
         
         self.inference_predictor = predictor
 
@@ -157,7 +146,7 @@ class BinaryRandomForestModel:
         # Use Treelite runtime if available
         if self.inference_predictor is not None:
             X_np = np.asarray(X, dtype=np.float32)
-            dmat = treelite_runtime.DMatrix(X_np)
+            dmat = tl2cgen.DMatrix(X_np)
 
             probs = self.inference_predictor.predict(dmat)
 
@@ -421,7 +410,7 @@ class FeatureSelectedRandomForestModel(BinaryRandomForestModel):
                 X = [[x[i] for i in self.selected_feature_indices] for x in X]
 
             X_np = np.asarray(X, dtype=np.float32)
-            dmat = treelite_runtime.DMatrix(X_np)
+            dmat = tl2cgen.DMatrix(X_np)
             probs = self.inference_predictor.predict(dmat)
             return [1 if p >= thresh else 0 for p in probs]
 
