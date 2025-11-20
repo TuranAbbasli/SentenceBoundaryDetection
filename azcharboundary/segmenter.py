@@ -398,7 +398,7 @@ class TextSegmenter:
                 model = sio.load(file=path, trusted=True)
                 self.model.set_model(model)
             else:
-                model = sio.load(file=path, trusted=["azcharboundary.utils.models.BinaryRandomForestModel"])
+                model = sio.load(file=path, trusted=["sklearn.ensemble._forest.RandomForestClassifier"])
                 self.model.set_model(model)
             self.is_trained = True
         
