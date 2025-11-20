@@ -5,6 +5,8 @@ import time
 import random
 from functools import lru_cache
 import skops.io as sio
+import treelite
+import treelite.sklearn
 from zipfile import ZIP_DEFLATED
 from typing import List, Dict, Any, Optional, Union, ClassVar
 
@@ -352,6 +354,7 @@ class TextSegmenter:
     def save(
         self,
         path: str,
+        serialization_format: str,
         compress: bool = True,
         compression_level: int = 9,
     ) -> None:
@@ -359,15 +362,31 @@ class TextSegmenter:
         Save the model and configuration to a file.
 
         Args:
-            path (str): Path to save the model
+            path (str): Path to save the model.
+            serialization_format (str): Format of serialization
             compress (bool, optional): Whether to use compression. Defaults to True.
             compression_level (int, optional): Compression level (0-9, where 9 is highest).
                                               Defaults to 9.
         """
-        if compress:
-            sio.dump(obj=self.model, file=path, compression=ZIP_DEFLATED, compresslevel=compression_level)
+        model = self.model.get_model()
+
+        if serialization_format.lower() == "treelite":        
+            tl_model = treelite.sklearn.import_model(model)
+            tl_model.save(path)
+
         else:
-            sio.dump(obj=self.model, file=path)
+            if compress:
+                sio.dump(obj=model, file=path, compression=ZIP_DEFLATED, compresslevel=compression_level)
+            else:
+                sio.dump(obj=model, file=path)
+
+        elif serialization_format.lower() == "treelite":
+            tl_model = treelite.sklearn.import_model(model)
+            tl_model.save(path)
+
+        else:
+            print("Enter valid serialiation format! ['skops', 'treelite]")
+            return None
 
     def load(
         self, path: str, trust_model: bool = False
