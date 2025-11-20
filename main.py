@@ -79,7 +79,7 @@ def demonstrate_basic_usage(data_dir: Path, save_dir: str):
     
 
     save_start = time.time()
-    segmenter.save(path=save_dir)
+    segmenter.save(path=save_dir, serialization_format="treelite")
     save_end = time.time()
     print('Time took to save model: {:.2f}'.format(save_end-save_start))
 
@@ -87,9 +87,12 @@ def demonstrate_basic_usage(data_dir: Path, save_dir: str):
 def main():
     """Run the example script."""
     data_dir = Path(r'azcharboundary\data\train_data_v3_fixed.jsonl')
-    save_dir = "azcharboundary/models/model_v1.xz"
+    save_dir = "azcharboundary/models/model_v1.tl"
 
-    demonstrate_basic_usage(data_dir, save_dir)
+    linux_data_dir = Path("azcharboundary/data/train_data_v3_fixed.jsonl")
+    linux_save_dir = "azcharboundary/models/model_v1.tl"
+
+    demonstrate_basic_usage(linux_data_dir, linux_save_dir)
 
 
 if __name__ == "__main__":
