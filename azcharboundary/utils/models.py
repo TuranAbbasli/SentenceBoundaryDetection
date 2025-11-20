@@ -2,10 +2,11 @@
 Model definitions and interfaces for the charboundary library.
 """
 
+import platform
+import numpy as np
 import sklearn.ensemble
 import sklearn.metrics
 import treelite_runtime
-import platform
 from typing import List, Dict, Any, Protocol, Optional
 
 
@@ -20,6 +21,10 @@ class TextSegmentationModel(Protocol):
         """Predict segmentation labels for the given features."""
         ...
 
+    def inference_predict(self, X: List[List[int]]) -> List[int]:
+        """Predict labels for inference."""
+        ...
+
     def get_metrics(self, X: List[List[int]], y: List[int]) -> Dict[str, Any]:
         """Evaluate the model on the given data."""
         ...
@@ -29,15 +34,15 @@ class TextSegmentationModel(Protocol):
         """Whether the model uses binary classification (boundary/non-boundary)."""
         ...
 
-    def set_model(self, model: any) -> None:
+    def set_model(self, model: Any) -> None:
         """Replace the underlying ML model."""
         ...
 
-    def get_model(self) -> any:
+    def get_model(self) -> Any:
         """Gets trained model"""
         ...
 
-    def set_inference_predictor(self, inference_model: any) -> None:
+    def set_inference_predictor(self, inference_model: Any) -> None:
         """Sets predictor for inference"""
         ...
 
@@ -92,13 +97,13 @@ class BinaryRandomForestModel:
         """
         return True
 
-    def set_model(self, model: any) -> None:
+    def set_model(self, model: Any) -> None:
         self.model = model
 
-    def get_model(self) -> any:
+    def get_model(self) -> Any:
         return self.model
     
-    def set_inference_predictor(self, inference_model: any) -> None:
+    def set_inference_predictor(self, inference_model: Any) -> None:
         def _treelite_libname():
             system = platform.system().lower()
             if system == "windows":
@@ -138,6 +143,29 @@ class BinaryRandomForestModel:
             self.feature_count = len(X[0])
 
         self.model.fit(X=X, y=y_binary)
+
+    def inference_predict(
+        self, X: List[List[int]], threshold: Optional[float] = None
+    ) -> List[int]:
+        """
+        Predict labels for inference.
+
+        If a Treelite predictor is available, use it for fast inference.
+        Otherwise, fall back to the regular sklearn-based predict().
+        """
+        thresh = threshold if threshold is not None else self.threshold
+
+        # Use Treelite runtime if available
+        if self.inference_predictor is not None:
+            X_np = np.asarray(X, dtype=np.float32)
+            dmat = treelite_runtime.DMatrix(X_np)
+
+            probs = self.inference_predictor.predict(dmat)
+
+            return [1 if p >= thresh else 0 for p in probs]
+
+        # Fallback: use normal predict (sklearn)
+        return self.predict(X, threshold=threshold)
 
     def predict(
         self, X: List[List[int]], threshold: Optional[float] = None
@@ -376,6 +404,30 @@ class FeatureSelectedRandomForestModel(BinaryRandomForestModel):
 
         # Save feature names and importance (if available)
         self.selected_feature_importance = self.model.feature_importances_
+
+    def inference_predict(
+        self, X: List[List[int]], threshold: Optional[float] = None
+    ) -> List[int]:
+        """
+        Predict labels for inference with feature selection.
+
+        Uses Treelite runtime if available; otherwise falls back to sklearn.
+        Applies selected feature indices consistently in both cases.
+        """
+        thresh = threshold if threshold is not None else self.threshold
+
+        # If using Treelite, we must match the feature dimensionality it expects
+        if self.inference_predictor is not None:
+            if self.selected_feature_indices is not None:
+                X = [[x[i] for i in self.selected_feature_indices] for x in X]
+
+            X_np = np.asarray(X, dtype=np.float32)
+            dmat = treelite_runtime.DMatrix(X_np)
+            probs = self.inference_predictor.predict(dmat)
+            return [1 if p >= thresh else 0 for p in probs]
+
+        # Fallback: use the existing sklearn-based predict
+        return self.predict(X, threshold=threshold)
 
     def predict(
         self, X: List[List[int]], threshold: Optional[float] = None
