@@ -37,8 +37,6 @@ class BinaryRandomForestModel:
     def __init__(
         self,
         threshold: float = 0.5,
-        use_onnx: bool = False,
-        onnx_optimization_level: int = 1,
         **kwargs,
     ):
         """
@@ -52,9 +50,6 @@ class BinaryRandomForestModel:
             **kwargs: Parameters to pass to the underlying RandomForestClassifier
         """
         self.threshold = threshold
-        self.onnx_optimization_level = onnx_optimization_level
-        self.onnx_model = None
-        self.onnx_session = None
         self.model_params = (
             kwargs.copy()
             if kwargs
