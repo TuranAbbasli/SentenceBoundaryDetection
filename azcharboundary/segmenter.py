@@ -380,14 +380,6 @@ class TextSegmenter:
             else:
                 sio.dump(obj=model, file=path)
 
-        elif serialization_format.lower() == "treelite":
-            tl_model = treelite.sklearn.import_model(model)
-            tl_model.save(path)
-
-        else:
-            print("Enter valid serialiation format! ['skops', 'treelite]")
-            return None
-
     def load(
         self, path: str, trust_model: bool = False
     ) -> None:
@@ -400,13 +392,24 @@ class TextSegmenter:
             trust_model (bool, optional): Whether to trust all types in the model file.
                                          Set to True only if you trust the source of the model file.
                                          Defaults to False.
-        """
-        if trust_model:
-            self.model = sio.load(file=path, trusted=True)
+        """       
+        if path.endswith('.skops'):
+            if trust_model:
+                model = sio.load(file=path, trusted=True)
+                self.model.set_model(model)
+            else:
+                model = sio.load(file=path, trusted=["azcharboundary.utils.models.BinaryRandomForestModel"])
+                self.model.set_model(model)
+            self.is_trained = True
+        
+        elif path.endswith('.tl'):
+            model = treelite.Model.load(path, model_format="treelite")
+
+            self.model.set_inference_predictor(inference_model=model)
+
             self.is_trained = True
         else:
-            self.model = sio.load(file=path, trusted=["azcharboundary.utils.models.BinaryRandomForestModel"])
-            self.is_trained = True
+            print(f"Wrong format model! Path: {path}")
 
     def inference(self, text: str, threshold: Optional[float] = None):
         """

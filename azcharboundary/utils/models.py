@@ -2,9 +2,11 @@
 Model definitions and interfaces for the charboundary library.
 """
 
-from typing import List, Dict, Any, Protocol, Optional
 import sklearn.ensemble
 import sklearn.metrics
+import treelite_runtime
+import platform
+from typing import List, Dict, Any, Protocol, Optional
 
 
 class TextSegmentationModel(Protocol):
@@ -27,11 +29,17 @@ class TextSegmentationModel(Protocol):
         """Whether the model uses binary classification (boundary/non-boundary)."""
         ...
 
-    def set_model(self, model: any) -> bool:
+    def set_model(self, model: any) -> None:
         """Replace the underlying ML model."""
+        ...
 
     def get_model(self) -> any:
         """Gets trained model"""
+        ...
+
+    def set_inference_predictor(self, inference_model: any) -> None:
+        """Sets predictor for inference"""
+        ...
 
 class BinaryRandomForestModel:
     """
@@ -72,6 +80,7 @@ class BinaryRandomForestModel:
             self.model_params["class_weight"] = "balanced"
 
         self.model = sklearn.ensemble.RandomForestClassifier(**self.model_params)
+        self.inference_predictor = None
 
     @property
     def is_binary(self) -> bool:
@@ -83,12 +92,36 @@ class BinaryRandomForestModel:
         """
         return True
 
-    def set_model(self, model: any) -> bool:
+    def set_model(self, model: any) -> None:
         self.model = model
 
     def get_model(self) -> any:
         return self.model
     
+    def set_inference_predictor(self, inference_model: any) -> None:
+        def _treelite_libname():
+            system = platform.system().lower()
+            if system == "windows":
+                return "rf_model.dll", "msvc"
+            elif system == "darwin":
+                return "rf_model.dylib", "clang"
+            return "rf_model.so", "gcc"
+        
+        libname, toolchain = _treelite_libname()
+
+        inference_model.export_lib(
+            toolchain=toolchain,
+            libpath=libname,
+            params={"parallel_comp": 4},
+        )
+
+        predictor = treelite_runtime.Predictor(
+            libpath=libname,
+            verbose=False
+        )
+        
+        self.inference_predictor = predictor
+
     def fit(self, X: List[List[int]], y: List[int]) -> None:
         """
         Fit the model to the data.
