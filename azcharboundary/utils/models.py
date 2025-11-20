@@ -27,6 +27,11 @@ class TextSegmentationModel(Protocol):
         """Whether the model uses binary classification (boundary/non-boundary)."""
         ...
 
+    def set_model(self, model: any) -> bool:
+        """Replace the underlying ML model."""
+
+    def get_model(self) -> any:
+        """Gets trained model"""
 
 class BinaryRandomForestModel:
     """
@@ -78,6 +83,12 @@ class BinaryRandomForestModel:
         """
         return True
 
+    def set_model(self, model: any) -> bool:
+        self.model = model
+
+    def get_model(self) -> any:
+        return self.model
+    
     def fit(self, X: List[List[int]], y: List[int]) -> None:
         """
         Fit the model to the data.
