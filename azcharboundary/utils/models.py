@@ -2,11 +2,10 @@
 Model definitions and interfaces for the charboundary library.
 """
 
-import platform
 import numpy as np
 import sklearn.ensemble
 import sklearn.metrics
-import treelite_runtime
+import tl2cgen
 from typing import List, Dict, Any, Protocol, Optional
 
 

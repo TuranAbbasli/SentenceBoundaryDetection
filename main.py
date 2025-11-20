@@ -49,7 +49,7 @@ def demonstrate_basic_usage(data_dir: Path, save_dir: str):
     train_start = time.time()
     metrics = segmenter.train(
         data=train_set,
-        model_params={"n_estimators": 512, "max_depth": 64},
+        model_params={"n_estimators": 128, "max_depth": 16},
         sample_rate=0.001,  # Increase sample rate to get better class balance
         left_window=5,      # Specify window sizes during training
         right_window=5
