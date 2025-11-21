@@ -2,14 +2,11 @@ import time
 
 from azcharboundary.segmenter import TextSegmenter
 
-def run_case(segmenter: TextSegmenter, text: str, case_name: str = "Testing!"):
-    """
-    Uses inference function make prediction on given text
 
-    Args:
-        segmenter (TextSegmenter): Model which will make prediction
-        text (str): Text on which predictions will be made
-        case_name (str): Case name for logging
+def run_case(segmenter: TextSegmenter, text: str, case_name: str = "Testing!") -> float:
+    """
+    Uses inference function to make prediction on given text
+    and returns inference time in milliseconds.
     """
     print(f"\n=== Running case: {case_name} ===")
     start = time.time()
@@ -21,18 +18,21 @@ def run_case(segmenter: TextSegmenter, text: str, case_name: str = "Testing!"):
 
     print(f"--- Inference time: {inference_time_ms:.2f} ms ---")
     print("--- Segmentation results ---")
-    print(f'Input: {text}\n')
-    print(f'Output: {output}\n')
+    print(f"Input: {text}\n")
+    print(f"Output: {output}\n")
+
+    return inference_time_ms
 
 
-def test_inference(model_dir: str):
-    """Inference test over multiple cases"""
-
+def test_inference(model_dir: str) -> float:
+    """Inference test over multiple cases. Returns average inference time in ms."""
     segmenter = TextSegmenter()
 
     load_start = time.time()
     segmenter.load(model_dir)
-    print("Model has been loaded! Time took: {:.2f}".format(time.time() - load_start))
+    print("Model has been loaded! Time took: {:.2f} s".format(time.time() - load_start))
+
+    inference_times_ms = []
 
     # CASE 1 — Legal domain
     text_legal = (
@@ -41,14 +41,14 @@ def test_inference(model_dir: str):
         "Heç kəs şəxsi məlumatlarının qanunsuz toplanmasına və yayılmasına məruz qala bilməz. "
         "Məhkəmə qərarı olmadan şəxsin telefon danışıqlarına nəzarət edilməsi qadağandır."
     )
-    run_case(segmenter, text_legal, "Legal domain")
+    inference_times_ms.append(run_case(segmenter, text_legal, "Legal domain"))
 
     # CASE 2 — General text
     text_general = (
         "Bu gün hava çox gözəldir. Səhər tezdən külək əsirdi, amma indi sakitdir. "
         "Axşam yağış yağacağı proqnozlaşdırılır."
     )
-    run_case(segmenter, text_general, "General domain")
+    inference_times_ms.append(run_case(segmenter, text_general, "General domain"))
 
     # CASE 3 — Long paragraph (stress test)
     text_long = (
@@ -58,19 +58,21 @@ def test_inference(model_dir: str):
         "Bir çox startaplar yaranır, dövlət innovasiyalara investisiya edir. "
         "Bu proses ölkənin rəqəmsal transformasiyasını daha da gücləndirir."
     )
-    run_case(segmenter, text_long, "Long text (stress test)")
+    inference_times_ms.append(run_case(segmenter, text_long, "Long text (stress test)"))
 
     # CASE 4 — Edge case: Short text
     text_short = "Salam dünya."
-    run_case(segmenter, text_short, "Short text")
+    inference_times_ms.append(run_case(segmenter, text_short, "Short text"))
 
     # CASE 5 — Edge case: No sentence-ending punctuation
-    text_no_punct = "Bu test cümləsi heç bir nöqtə işarəsi yoxdur və model bununla necə işləyəcək görək"
-    run_case(segmenter, text_no_punct, "No punctuation")
+    text_no_punct = (
+        "Bu test cümləsi heç bir nöqtə işarəsi yoxdur və model bununla necə işləyəcək görək"
+    )
+    inference_times_ms.append(run_case(segmenter, text_no_punct, "No punctuation"))
 
     # CASE 6 — Edge case: Many punctuation marks
     text_punct = "Bu nədir?! Siz bunu gördünüzmü?! Yox, inanmıram..."
-    run_case(segmenter, text_punct, "Heavy punctuation")
+    inference_times_ms.append(run_case(segmenter, text_punct, "Heavy punctuation"))
 
     # CASE 7 — Legal: list of short phrases (clauses, fragments)
     text_legal_phrases = (
@@ -79,7 +81,9 @@ def test_inference(model_dir: str):
         "e) əhəmiyyətli şərtlərin pozulması; ə) gecikmiş öhdəlik; "
         "f) tərəflərin məsuliyyəti."
     )
-    run_case(segmenter, text_legal_phrases, "Legal domain — list of phrases")
+    inference_times_ms.append(
+        run_case(segmenter, text_legal_phrases, "Legal domain — list of phrases")
+    )
 
     # CASE 8 — Legal: list of sentences separated by yeni sətr/bullet-like struktur
     text_legal_list_sentences = (
@@ -89,7 +93,13 @@ def test_inference(model_dir: str):
         "4) Tərəflər arasında yaranan ziyan, qanunvericiliyə uyğun olaraq kompensasiya edilir. "
         "5) Müqavilənin müddəti bitdikdə, tərəflərin yazılı razılığı ilə uzadıla bilər."
     )
-    run_case(segmenter, text_legal_list_sentences, "Legal domain — numbered list of sentences")
+    inference_times_ms.append(
+        run_case(
+            segmenter,
+            text_legal_list_sentences,
+            "Legal domain — numbered list of sentences",
+        )
+    )
 
     # CASE 9 — Legal: çox uzun cümlə (tək cümləlik stress test)
     text_legal_long_sentence = (
@@ -99,7 +109,9 @@ def test_inference(model_dir: str):
         "təsdiq edilmişdir və həmin məbləğin, həmçinin gecikdirməyə görə hesablanmış "
         "dəbbə pulu və məhkəmə xərclərinin cavabdehdən tutulmasını xahiş etmişdir."
     )
-    run_case(segmenter, text_legal_long_sentence, "Legal domain — single long sentence")
+    inference_times_ms.append(
+        run_case(segmenter, text_legal_long_sentence, "Legal domain — single long sentence")
+    )
 
     # CASE 10 — Legal: abbreviations, maddə istinadları, rəqəmlər
     text_legal_abbrev = (
@@ -110,7 +122,9 @@ def test_inference(model_dir: str):
         "Bu Qanun və digər normativ-hüquqi aktlar (o cümlədən, \"İstehlakçıların hüquqlarının müdafiəsi haqqında\" Qanun) "
         "istehlakçıların mənafeyini qorumağa yönəlib."
     )
-    run_case(segmenter, text_legal_abbrev, "Legal domain — abbreviations & article refs")
+    inference_times_ms.append(
+        run_case(segmenter, text_legal_abbrev, "Legal domain — abbreviations & article refs")
+    )
 
     # CASE 11 — Legal: sitatlar, mötərizələr, tirelər
     text_legal_quotes = (
@@ -120,7 +134,9 @@ def test_inference(model_dir: str):
         "(öhdəliyin qəsdən yerinə yetirilməməsi və qarşı tərəfin ziyana salınması) "
         "qanunvericiliyin tələblərinə ziddir — bu halda, əlavə məsuliyyət tədbirləri tətbiq oluna bilər."
     )
-    run_case(segmenter, text_legal_quotes, "Legal domain — quotes & parentheses")
+    inference_times_ms.append(
+        run_case(segmenter, text_legal_quotes, "Legal domain — quotes & parentheses")
+    )
 
     # CASE 12 — Legal: tarixlər, faizlər, qarışıq struktur
     text_legal_mixed = (
@@ -130,7 +146,9 @@ def test_inference(model_dir: str):
         "etmədikdə, bank gecikdirilmiş hər günə görə əlavə 0.1% dəbbə pulu hesablayır. "
         "Tərəflər arasında bu müddəa ilə bağlı hər hansı yazılı etiraz qeydə alınmamışdır."
     )
-    run_case(segmenter, text_legal_mixed, "Legal domain — dates, numbers, percentages")
+    inference_times_ms.append(
+        run_case(segmenter, text_legal_mixed, "Legal domain — dates, numbers, percentages")
+    )
 
     # CASE 13 — Legal: çoxlu qısa cümlələr, müxtəlif nöqtələnmə
     text_legal_many_short = (
@@ -138,7 +156,9 @@ def test_inference(model_dir: str):
         "Qərar elan olundu. Tərəflərə izah edildi. "
         "Qərardan kassasiya qaydasında şikayət vermək hüququ saxlanılır!"
     )
-    run_case(segmenter, text_legal_many_short, "Legal domain — many short sentences")
+    inference_times_ms.append(
+        run_case(segmenter, text_legal_many_short, "Legal domain — many short sentences")
+    )
 
     # CASE 14 — Legal: qarışıq dil (az + bəzi ingilis hüquqi terminləri)
     text_legal_mixed_lang = (
@@ -147,7 +167,19 @@ def test_inference(model_dir: str):
         "mübahisə Bakı Kommersiya Məhkəməsində arbitration istisna olunmaqla baxılır. "
         "Force majeure hallarına təbii fəlakətlər, müharibə və hökumət qərarları daxildir."
     )
-    run_case(segmenter, text_legal_mixed_lang, "Legal domain — mixed language & terms")
+    inference_times_ms.append(
+        run_case(
+            segmenter,
+            text_legal_mixed_lang,
+            "Legal domain — mixed language & terms",
+        )
+    )
+
+    avg_inference_ms = sum(inference_times_ms) / len(inference_times_ms)
+    print("\nAverage inference time over {} cases: {:.2f} ms".format(
+        len(inference_times_ms), avg_inference_ms
+    ))
+    return avg_inference_ms
 
 
 if __name__ == "__main__":
