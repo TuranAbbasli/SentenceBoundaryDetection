@@ -38,5 +38,5 @@ parameters: {
 }
 parameters: {
   key: "model_filename"
-  value: { string_value: "model_v1.tl" }  # matches your file name in model/1/
+  value: { string_value: "checkpoint.tl" }  # matches your file name in model/1/
 }

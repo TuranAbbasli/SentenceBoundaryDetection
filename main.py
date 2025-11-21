@@ -94,8 +94,8 @@ def main():
     data_dir = Path(r'azcharboundary\data\train_data_v3_fixed.jsonl')
     save_dir = "azcharboundary/models/model_v1.tl"
 
-    linux_data_dir = Path("azcharboundary/data/train_data_v3_fixed.jsonl")
-    linux_save_dir = "azcharboundary/models/model_v1.tl"
+    linux_data_dir = Path("azcharboundary/data/train_data_v2.jsonl")
+    linux_save_dir = "azcharboundary/trained_models/v2/checkpoint.tl"
 
     demonstrate_basic_usage(linux_data_dir, linux_save_dir)
 
