@@ -5,7 +5,6 @@ Feature extraction functionality for the charboundary library.
 from typing import List, Tuple, Optional, Protocol, TypeAlias
 from functools import lru_cache
 import random
-from functools import partial
 
 # Try to import numpy - if not available, we'll use list-based processing
 try:
