@@ -2,8 +2,7 @@
 Evaluation functionality for text segmenters.
 """
 
-import gzip
-import json
+from tqdm import tqdm
 from typing import List, Union, Optional, TYPE_CHECKING
 
 import sklearn.metrics
@@ -25,6 +24,7 @@ class Evaluator:
         segmenter: "TextSegmenter",
         data: Union[str, List[str]],
         max_samples: Optional[int] = None,
+        sample_rate: float = 0.1,
     ) -> MetricsResult:
         """
         Evaluate the model on a dataset.
@@ -46,45 +46,12 @@ class Evaluator:
         all_true_labels = []
         all_predictions = []
 
-        # Process data
-        if isinstance(data, str):
-            # Path to a file
-            if data.endswith(".jsonl.gz"):
-                # Handle gzipped jsonl files
-                with gzip.open(data, "rt", encoding="utf-8") as f:
-                    i = 0
-                    for line in f:
-                        if max_samples is not None and i >= max_samples:
-                            break
-                        try:
-                            json_obj = json.loads(line.strip())
-                            if "text" in json_obj:
-                                Evaluator._evaluate_text(
-                                    segmenter,
-                                    json_obj["text"],
-                                    all_true_labels,
-                                    all_predictions,
-                                )
-                                i += 1
-                        except json.JSONDecodeError:
-                            print(f"Warning: Skipping invalid JSON line in {data}")
-            else:
-                # Handle regular text files
-                with open(data, "r", encoding="utf-8") as input_file:
-                    texts = input_file.readlines()
-                    for i, text in enumerate(texts):
-                        if max_samples is not None and i >= max_samples:
-                            break
-                        Evaluator._evaluate_text(
-                            segmenter, text, all_true_labels, all_predictions
-                        )
-        elif isinstance(data, list):
-            for i, text in enumerate(data):
-                if max_samples is not None and i >= max_samples:
-                    break
-                Evaluator._evaluate_text(
-                    segmenter, text, all_true_labels, all_predictions
-                )
+        for i, text in enumerate(tqdm(data, total=max_samples or len(data))):
+            if max_samples is not None and i >= max_samples:
+                break
+            Evaluator._evaluate_text(
+                segmenter, text, all_true_labels, all_predictions, sample_rate
+            )
 
         # Generate evaluation report
         report: MetricsResult = {
@@ -147,6 +114,7 @@ class Evaluator:
         text: str,
         all_true_labels: PositionLabels,
         all_predictions: PositionLabels,
+        sample_rate: float = 0.1,
     ) -> None:
         """
         Evaluate a text and add its true labels and predictions to the provided lists.
@@ -157,12 +125,12 @@ class Evaluator:
             all_true_labels (PositionLabels]): List to which true labels will be added
             all_predictions (PositionLabels]): List to which predictions will be added
         """
-        clean_text, features, true_labels = (
+        features, true_labels = (
             segmenter.feature_extractor.process_annotated_text(
                 text,
                 segmenter.config.left_window,
                 segmenter.config.right_window,
-                segmenter.config.num_workers,
+                sample_rate=sample_rate
             )
         )
 

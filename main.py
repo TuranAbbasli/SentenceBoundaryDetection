@@ -69,6 +69,7 @@ def demonstrate_basic_usage(data_dir: Path, save_dir: str):
     evaluation_metrics = segmenter.evaluate(
         data=test_set,                          
         max_samples=None,
+        sample_rate=0.001
     )
 
     # Display evaluation metrics

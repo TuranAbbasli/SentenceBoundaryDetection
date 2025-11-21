@@ -470,7 +470,7 @@ class TextSegmenter:
 
     # Evaluation methods
     def evaluate(
-        self, data: Union[str, List[str]], max_samples: Optional[int] = None
+        self, data: Union[str, List[str]], max_samples: Optional[int] = None, sample_rate: float = 0.1
     ) -> MetricsResult:
         """
         Evaluate the model on a dataset.
@@ -485,4 +485,4 @@ class TextSegmenter:
         Returns:
             MetricsResult: Evaluation metrics
         """
-        return Evaluator.evaluate(self, data, max_samples)
+        return Evaluator.evaluate(self, data, max_samples, sample_rate)
