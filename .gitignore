@@ -12,6 +12,7 @@ __pypackages__/
 # Environments
 .env
 .venv
+wsl_venv
 env/
 venv/
 ENV/
@@ -28,3 +29,4 @@ corpus.txt
 
 # SBD
 charboundary
+*.so
