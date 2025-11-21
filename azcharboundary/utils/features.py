@@ -4,8 +4,7 @@ Feature extraction functionality for the charboundary library.
 
 from typing import List, Tuple, Optional, Protocol, TypeAlias
 from functools import lru_cache
-import multiprocessing
-from multiprocessing import Pool
+import random
 from functools import partial
 
 # Try to import numpy - if not available, we'll use list-based processing
@@ -52,8 +51,8 @@ class FeatureExtractorProtocol(Protocol):
         ...
 
     def process_annotated_text(
-        self, text: str, left_window: int = 5, right_window: int = 5
-    ) -> Tuple[str, FeatureMatrix, PositionLabels]:
+        self, text: str, left_window: int = 5, right_window: int = 5, sample_rate: float = 0.1
+    ) -> Tuple[FeatureMatrix, PositionLabels]:
         """Process annotated text to extract features and labels."""
         ...
 
@@ -779,8 +778,8 @@ class FeatureExtractor:
         text: str,
         left_window: int = 5,
         right_window: int = 5,
-        num_workers: int = 0,
-    ) -> Tuple[str, FeatureMatrix, PositionLabels]:
+        sample_rate: float = 0.1
+    ) -> Tuple[FeatureMatrix, PositionLabels]:
         """
         Process an annotated text to extract features and labels with optional parallelization.
 
@@ -788,14 +787,13 @@ class FeatureExtractor:
             text (str): Text with sentence and paragraph annotations
             left_window (int, optional): Size of left context window. Defaults to 5.
             right_window (int, optional): Size of right context window. Defaults to 5.
-            num_workers (int, optional): Number of worker processes for parallel feature extraction.
-                If 0, automatic detection based on text length. Defaults to 0.
+            sample_rate (float, optional): Rate at which to sample non-terminal positions.
+                Defaults to 0.1.
 
         Returns:
-            Tuple[str, FeatureMatrix, PositionLabels]:
-                - clean_text: Text with annotations removed
-                - features: Character-level features
-                - labels: Position markers (0: non-terminal, 1: boundary)
+            Tuple[FeatureMatrix, PositionLabels]:
+                - sampled_features: Character-level features
+                - sampled_labels: Position markers (0: non-terminal, 1: boundary)
         """
         # Get labels first
         labels = self.mark_annotation_positions(text)
@@ -803,47 +801,32 @@ class FeatureExtractor:
         # Clean text (remove annotations)
         clean_text = text.replace(SENTENCE_TAG, "")
 
-        # Determine if we should use parallel processing
-        # Only parallelize for long texts, short texts are faster with direct processing
-        text_len = len(clean_text)
+        # Extract features for terminal characters only - optimized approach
+        positions: list[int] = []
 
-        # Automatic worker detection if num_workers is 0
-        if num_workers == 0:
-            if text_len > 100000:  # Very long text
-                num_workers = min(multiprocessing.cpu_count(), 8)
-            elif text_len > 10000:  # Medium length text
-                num_workers = min(multiprocessing.cpu_count() // 2, 4)
-            else:  # Short text, no parallelization
-                num_workers = 0
+        # Identify all training samples for optimized feature extraction
+        for i, char in enumerate(clean_text):
+            # boundary char
+            if labels[i] == 1:
+                positions.append(i)
 
-        # Extract features, potentially in parallel
-        if num_workers > 1 and text_len > 10000:
-            # Split the text into chunks for parallel processing
-            chunk_size = text_len // num_workers
-            chunks = [
-                (i, min(i + chunk_size, text_len))
-                for i in range(0, text_len, chunk_size)
-            ]
+            # terminal char but non-boundary
+            elif char in TERMINAL_SENTENCE_CHAR_LIST:
+                positions.append(i)
 
-            # Create a partial function with fixed parameters
-            process_chunk = partial(
-                self._process_chunk,
-                text=clean_text,
-                left_window=left_window,
-                right_window=right_window,
-            )
+            # non-terminal and non-boundary char
+            elif random.random() < sample_rate:
+                positions.append(i)
 
-            # Process chunks in parallel
-            with Pool(num_workers) as pool:
-                feature_chunks = pool.map(process_chunk, chunks)
+            # skip unnecessary chars
+            else:
+                continue
+        
+        # For shorter texts, use the regular approach
+        sampled_features = self.get_char_features(clean_text, left_window, right_window, positions=list(positions))
+        sampled_labels = [label for position, label in enumerate(labels) if position in positions]
 
-            # Combine chunks
-            features = [feat for chunk in feature_chunks for feat in chunk]
-        else:
-            # For shorter texts, use the regular approach
-            features = self.get_char_features(clean_text, left_window, right_window)
-
-        return clean_text, features, labels
+        return sampled_features, sampled_labels
 
     def print_text_analysis(
         self, text: str, left_window: int = 5, right_window: int = 5

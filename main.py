@@ -40,7 +40,6 @@ def demonstrate_basic_usage(data_dir: Path, save_dir: str):
     print("Loading data!")
     with open(data_dir, "r", encoding="utf-8", errors="replace") as f:
         preprocessed_data = [json.loads(line) for line in f]
-    random.shuffle(preprocessed_data)
     
     datas = [item["text"] for item in preprocessed_data]
     train_set, test_set = train_test_split(datas)
@@ -51,7 +50,7 @@ def demonstrate_basic_usage(data_dir: Path, save_dir: str):
     metrics = segmenter.train(
         data=train_set,
         model_params={"n_estimators": 128, "max_depth": 16},
-        sample_rate=0.001,  # Increase sample rate to get better class balance
+        sample_rate=0.001,    # Increase sample rate to get better class balance
         left_window=5,      # Specify window sizes during training
         right_window=5
     )

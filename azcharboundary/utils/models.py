@@ -105,10 +105,10 @@ class BinaryRandomForestModel:
     def set_inference_predictor(self, inference_model: Any) -> None:
         tl2cgen.export_lib(
             inference_model,
-            params={"parallel_comp": 4},
+            params={"parallel_comp": 6},
             toolchain="gcc",
             libpath="./predictor.so",
-            nthread=4
+            nthread=6
         )
 
         predictor = tl2cgen.Predictor("./predictor.so")

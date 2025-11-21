@@ -2,7 +2,7 @@
 Base text segmentation functionality for the charboundary library.
 """
 import time
-import random
+from tqdm import tqdm
 from functools import lru_cache
 import skops.io as sio
 import treelite
@@ -322,36 +322,19 @@ class TextSegmenter:
             sample_rate (float, optional): Rate at which to sample non-terminal positions.
                 Defaults to 0.1.
         """
-        clean_text, text_features, text_labels = (
+        sampled_features, sampled_labels = (
             self.feature_extractor.process_annotated_text(
                 text,
                 self.config.left_window,
                 self.config.right_window,
-                self.config.num_workers,
+                sample_rate=sample_rate
             )
         )
 
-        # Always include terminal characters and a sample of non-terminal characters
-        for j, (char, feature_vec, label) in enumerate(
-            zip(clean_text, text_features, text_labels)
-        ):
-            is_terminal = (
-                char in TERMINAL_SENTENCE_CHAR_LIST
-            )
-
-            # Use modern Python 3.11 pattern matching for cleaner code
-            match (label, is_terminal, random.random() < sample_rate):
-                case (1, _, _):  # Always include positive samples (boundaries)
-                    features.append(feature_vec)
-                    labels.append(label)
-                case (_, True, _):  # Always include terminal characters
-                    features.append(feature_vec)
-                    labels.append(label)
-                case (_, _, True):  # Sample some non-terminals based on rate
-                    features.append(feature_vec)
-                    labels.append(label)
-                case _:  # Skip other non-terminal characters
-                    pass
+        # add extracted features and labels
+        for feature, label in zip(sampled_features, sampled_labels):
+            features.append(feature)
+            labels.append(label)
 
     def save(
         self,

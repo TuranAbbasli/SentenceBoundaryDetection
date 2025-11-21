@@ -7,5 +7,6 @@ scipy==1.15.3
 skops==0.13.0
 threadpoolctl==3.6.0
 tl2cgen==1.0.0
+tqdm==4.67.1
 treelite==4.1.2
 wcwidth==0.2.14
