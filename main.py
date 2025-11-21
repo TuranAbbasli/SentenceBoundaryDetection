@@ -6,27 +6,9 @@ Example script to demonstrate the usage of the CharBoundary library.
 import json
 import time
 import random
-from tqdm import tqdm
 from pathlib import Path
 
 from azcharboundary.segmenter import TextSegmenter
-
-def load_data(data_dir: Path) -> list[dict]:
-    """
-    Loads preprocessed data
-
-    Args:
-        data_dir (Path): Path to preprocessed data
-
-    Returns:
-        list[dict]: Loaded data
-    """
-    preprocessed_data: list[dict] = []
-    with open(data_dir, "r", encoding="utf-8", errors="replace") as f:
-        for line in tqdm(f, total=len(f)):
-            preprocessed_data.append(json.loads(line))
-
-    return preprocessed_data
 
 def train_test_split(data: list, ratio: int = 0.2, shuffle: bool = True) -> tuple[list, list]:
     """
@@ -55,7 +37,10 @@ def demonstrate_basic_usage(data_dir: Path, save_dir: str):
     # Create a segmenter
     segmenter = TextSegmenter()
     
-    preprocessed_data = load_data(data_dir=data_dir)
+    print("Loading data!")
+    with open(data_dir, "r", encoding="utf-8", errors="replace") as f:
+        preprocessed_data = [json.loads(line) for line in f]
+    random.shuffle(preprocessed_data)
     
     datas = [item["text"] for item in preprocessed_data]
     train_set, test_set = train_test_split(datas)
