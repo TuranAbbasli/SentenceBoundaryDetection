@@ -45,7 +45,8 @@ def demonstrate_basic_usage(data_dir: Path, save_dir: str):
     train_set, test_set = train_test_split(datas)
 
     # Train the segmenter
-    print(f"Training segmenter with {len(train_set)} training data.")
+    print(f"Training segmenter with {len(train_set)} training data.\n")
+
     train_start = time.time()
     metrics = segmenter.train(
         data=train_set,
@@ -57,14 +58,14 @@ def demonstrate_basic_usage(data_dir: Path, save_dir: str):
     print("Training completed in {:.2f} seconds.".format(time.time() - train_start))
     
     # Display training metrics
-    print(f"Training metrics:")
+    print(f"\nTraining metrics:")
     print(f"  Overall accuracy:       {metrics.get('accuracy', 0):.4f}")
     print(f"  Boundary accuracy:      {metrics.get('boundary_accuracy', 0):.4f}")
     print(f"  Boundary precision:     {metrics.get('precision', 0):.4f}")
     print(f"  Boundary recall:        {metrics.get('recall', 0):.4f}")
     print(f"  Boundary F1-score:      {metrics.get('f1_score', 0):.4f}")
 
-    print(f"Evaluation on test set sized {len(test_set)}.")
+    print(f"\nEvaluation on test set sized {len(test_set)}.")
     evaluation_start = time.time()
     evaluation_metrics = segmenter.evaluate(
         data=test_set,                          
@@ -73,7 +74,7 @@ def demonstrate_basic_usage(data_dir: Path, save_dir: str):
     )
 
     # Display evaluation metrics
-    print(f"Evaluation metrics:")
+    print(f"\nEvaluation metrics:")
     print(f"  Overall accuracy:       {evaluation_metrics.get('accuracy', 0):.4f}")
     print(f"  Boundary accuracy:      {evaluation_metrics.get('boundary_accuracy', 0):.4f}")
     print(f"  Boundary precision:     {evaluation_metrics.get('precision', 0):.4f}")
@@ -85,7 +86,7 @@ def demonstrate_basic_usage(data_dir: Path, save_dir: str):
     save_start = time.time()
     segmenter.save(path=save_dir, serialization_format="treelite")
     save_end = time.time()
-    print('Time took to save model: {:.2f}'.format(save_end-save_start))
+    print('\nTime took to save model: {:.2f}'.format(save_end-save_start))
 
 
 def main():
