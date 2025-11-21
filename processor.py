@@ -1,7 +1,8 @@
 import json
 import re
-from typing import List, Dict, Optional
 import logging
+from tqdm import tqdm
+from typing import List, Dict, Optional
 
 from constants import CONFUSABLE_MAP, ALLOWED_AZ_CHARS
 
@@ -49,6 +50,25 @@ def fix_unicode_encodings(text: str) -> Optional[str]:
         return text
     
     return None
+
+def contains_structural_heading(entry_text: str) -> bool:
+    """
+    Detect whether a dataset entry contains a structural heading like:
+        Maddə 4.<|sentence|>
+        Fəsil 2.1.<|sentence|>
+        Bölmə III.<|sentence|>
+        Bənd 1.03.<|sentence|>
+
+    If yes -> drop the entire entry.
+    """
+    pattern = (
+        r'(Maddə|Bölmə|Fəsil|Bənd)\s+'
+        r'([IVXLCDM]+|\d+(\.\d+)*?)'
+        r'\.<\|sentence\|>'
+    )
+
+    return re.search(pattern, entry_text) is not None
+
 
 def has_terminal(text: str) -> bool:
     """
@@ -220,6 +240,20 @@ def save_jsonl(data: List[Dict[str, str]], path: str) -> None:
             f.write("\n")
     logger.info(f"Created {len(data)} entries → {path}")
 
+def drop_bad(entries: List[Dict[str, str]]) -> List[Dict[str, str]]:
+    """
+    Remove dataset entries that contain structural headings like:
+        Maddə X.<|sentence|>
+        Bölmə III.<|sentence|>
+        Fəsil 2.3.<|sentence|>
+        Bənd 1.02.<|sentence|>
+
+    These entries are unsafe and must be dropped entirely.
+    """
+    return [
+        entry for entry in entries
+        if not contains_structural_heading(entry["text"])
+    ]
 
 def main(input_path: str) -> None:
     """
@@ -235,15 +269,19 @@ def main(input_path: str) -> None:
     logger.info(f"Collected {len(sentences)} cleaned sentences.")
 
     logger.info("Building datasets.")
-    v1 = build_v1(sentences)
+    # v1 = build_v1(sentences)
     v2 = build_v2(sentences)
-    v3 = build_v3(sentences)
+    # v3 = build_v3(sentences)
 
-    save_jsonl(v1, "train_data_v1.jsonl")
-    save_jsonl(v2, "train_data_v2.jsonl")
-    save_jsonl(v3, "train_data_v3.jsonl")
+    logger.info("Dropping bad entries from datasets.")
+    # v1 = drop_bad(v1)
+    v2 = drop_bad(v2)
+    # v3 = drop_bad(v3)
 
-    logger.info("Saved datasets: train_data_v1.jsonl, train_data_v2.jsonl, train_data_v3.jsonl")
+    # save_jsonl(v1, "train_data_v1.jsonl")
+    save_jsonl(v2, "train_data_v2_final.jsonl")
+    # save_jsonl(v3, "train_data_v3.jsonl")
+    logger.info("Saved datasets")
 
 if __name__ == "__main__":
     main("raw_data.jsonl")

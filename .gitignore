@@ -13,3 +13,6 @@ generation
 venv
 .venv
 .emv
+
+raw_data.jsonl
+train_data_v2.jsonl
