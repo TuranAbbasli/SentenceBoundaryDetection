@@ -22,9 +22,6 @@ wsl_venv
 # Logs
 *.log
 
-# Model related
-*.so
-
 # Data
 *.json
 *.jsonl

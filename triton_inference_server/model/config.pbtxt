@@ -1,0 +1,42 @@
+name: "model"
+backend: "fil"
+max_batch_size: 0
+
+input [
+  {
+    name: "input__0"
+    data_type: TYPE_FP32
+    dims: [ -1, 19 ]   # (N, 19) features; change 19 if your feature size is different
+  }
+]
+
+output [
+  {
+    name: "output__0"
+    data_type: TYPE_FP32
+    dims: [ -1, 2 ]    # (N, 2) probabilities [p0, p1]
+  }
+]
+
+instance_group [
+  {
+    kind: KIND_GPU     # or KIND_CPU if you prefer CPU
+  }
+]
+
+parameters: {
+  key: "model_type"
+  value: { string_value: "treelite_checkpoint" }
+}
+parameters: {
+  key: "predict_proba"
+  value: { string_value: "true" }   # return probabilities
+}
+parameters: {
+  key: "output_class"
+  value: { string_value: "false" }  # don't argmax in FIL
+}
+parameters: {
+  key: "model_filename"
+  value: { string_value: "model_v1.tl" }  # matches your file name in model/1/
+}
