@@ -4,39 +4,40 @@ max_batch_size: 0
 
 input [
   {
-    name: "input__0"
+    name: "input"
     data_type: TYPE_FP32
-    dims: [ -1, 19 ]   # (N, 19) features; change 19 if your feature size is different
+    dims: [ 19 ]       # per-sample feature size; batch dim will be added by Triton
   }
 ]
 
 output [
   {
-    name: "output__0"
+    name: "output"
     data_type: TYPE_FP32
-    dims: [ -1, 2 ]    # (N, 2) probabilities [p0, p1]
+    dims: [ 2 ]        # per-sample [p0, p1]; batch dim added by Triton
   }
 ]
 
 instance_group [
   {
-    kind: KIND_GPU     # or KIND_CPU if you prefer CPU
+    kind: KIND_GPU
+    count: 1
   }
 ]
 
-parameters: {
+parameters {
   key: "model_type"
-  value: { string_value: "treelite_checkpoint" }
+  value { string_value: "treelite_checkpoint" }
 }
-parameters: {
+parameters {
   key: "predict_proba"
-  value: { string_value: "true" }   # return probabilities
+  value { string_value: "true" }
 }
-parameters: {
+parameters {
   key: "output_class"
-  value: { string_value: "false" }  # don't argmax in FIL
+  value { string_value: "false" }
 }
-parameters: {
+parameters {
   key: "model_filename"
-  value: { string_value: "checkpoint.tl" }  # matches your file name in model/1/
+  value { string_value: "checkpoint.tl" }
 }
