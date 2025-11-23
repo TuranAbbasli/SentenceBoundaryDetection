@@ -39,10 +39,10 @@ def demonstrate_basic_usage(data_dir: Path, save_dir: str):
     
     print("Loading data!")
     with open(data_dir, "r", encoding="utf-8", errors="replace") as f:
-        preprocessed_data = [json.loads(line) for line in f]
-    
-    datas = [item["text"] for item in preprocessed_data]
-    train_set, test_set = train_test_split(datas)
+        preprocessed_data: list[dict] = [json.loads(line) for line in f]
+
+    datas = [item["input"] for item in preprocessed_data]
+    train_set, test_set = train_test_split(datas, ratio=0.1)
 
     # Train the segmenter
     print(f"Training segmenter with {len(train_set)} training data.\n")
@@ -94,7 +94,7 @@ def main():
     data_dir = Path(r'azcharboundary\data\train_data_v3_fixed.jsonl')
     save_dir = "azcharboundary/models/model_v1.tl"
 
-    linux_data_dir = Path("azcharboundary/data/train_data_v2.jsonl")
+    linux_data_dir = Path("azcharboundary/data/train_data_labeled_types_abbr_cleaned_fixed.jsonl")
     linux_save_dir = "azcharboundary/trained_models/v2/checkpoint.tl"
 
     demonstrate_basic_usage(linux_data_dir, linux_save_dir)

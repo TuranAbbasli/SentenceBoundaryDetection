@@ -134,8 +134,13 @@ class Evaluator:
             )
         )
 
-        predictions = segmenter.model.predict(features)
+        if len(features) == 0:
+            print(f"DEBUG! Text: {text}\n")
+            print(f"DEBUG! Features: {features}\n")
+            print(f"DEBUG! Labels: {true_labels}\n")
+        else:
+            predictions = segmenter.model.predict(features)
 
-        # Add all predictions and labels for proper evaluation
-        all_true_labels.extend(true_labels)
-        all_predictions.extend(predictions)
+            # Add all predictions and labels for proper evaluation
+            all_true_labels.extend(true_labels)
+            all_predictions.extend(predictions)

@@ -247,49 +247,81 @@ ALLOWED_AZ_CHARS = {
 
 # Default list of common abbreviations that end with a period but don't end sentences
 DEFAULT_ABBREVIATIONS = [
-# --- Roman numerals ---
-"I.", "II.", "III.", "IV.", "V.", "VI.", "VII.", "VIII.", "IX.", "X.", "XI.", "XII.",
-"XIII.", "XIV.", "XV.", "XVI.", "XVII.", "XVIII.", "XIX.", "XX.", "XXI.", "XXII.",
-"XXIII.", "XXIV.", "XXV.", "XXVI.", "XXVII.", "XXIX.", "XXX.", "XXXI.", "XXXII.",
-"XXXIII.", "XXXIV.", "XXXV.", "XXXVI.",
+    "(A).", "-Ş.", "0.2Sta.", "0Bis.", "130-2fər.", "130f.", "16f.", "18x22sm.", "1L.", "1a.",
+    "2-Bis.", "28-bis.", "3-Bis.", "3.2.B.", "3.a.", "3/4-in.", "3Bis.", "3\\T.", "3⁄8-in.",
+    "42KB.", "42KC.", "6Bis.", "6Ter.", "6sm.", "6ter.", "7S.R.L.", "9/T.K.", "95sm.", "A-l.",
+    "A.", "A.A.", "A.A.S.A.", "A.B.", "A.Bölməsi.", "A.C.", "A.E.", "A.F.", "A.G.", "A.H.",
+    "A.K.", "A.L.P.E.E.", "A.M.", "A.O.", "A.Q.", "A.R.", "A.S.", "A.S.A.", "A.T.", "A.X.",
+    "A.Y.", "A.Z.", "A.l.", "A.İ.", "A.Ş.", "A.Ə.", "ARCin.", "ASC.", "AZ.", "Acc.", "Ak.",
+    "Akad.", "Art.", "Arx.", "As.", "Assoc.", "Az.", "Azərb.", "B.", "B.2.", "B.2.1.", "B.4.",
+    "B.5.", "B.A.", "B.C.", "B.I.", "B.III.", "B.IV.", "B.M.", "B.V.", "B.Y.", "B.l.", "B.Ş.",
+    "B.Ə.", "B2.", "Bax.", "Bdəy.", "Bhd.", "Bi.", "Bi.Vi.", "Bis.", "Bldg.", "BÖLMƏ.", "C.",
+    "C.2.", "C.5.", "C.C.", "C.F.", "C.F.R.", "C.M.", "C.Q.", "C.l.", "C.İ.F.", "C.Ə.", "CO.",
+    "COI/T.20/Doc.", "COI/T.20/Doc.no.", "COƏ/T.20/Doc.", "Chem.Soc.", "Co.", "Coemeandothersv.",
+    "Corc.", "Crt.", "D.", "D.C.", "D.F.", "D.H.", "D.M.", "D.P.", "D.Q.", "D.V.", "D.c.", "D.l.",
+    "D2.", "D2.1.", "D2.2.", "D3.2.", "DTK.", "Desf.", "Dm/avad.", "Dm/yum.", "Dma.", "Dmma.",
+    "Dmöv.avad.", "Dmöv.maş.avad.", "Dmöv.yum.", "Doc.", "Doc.no.", "Dr.", "Dəf.", "E.",
+    "E.4.2.", "E.A.", "E.B.", "E.F.", "E.H.", "E.H.Q.", "E.L.", "E.M.", "E.N.", "E.S.", "E.T.",
+    "E.T.H.M.", "E.U.", "E.Z.", "E.d.", "E.İ.", "E.Ə.", "ETSNo.", "Edax.o.", "Ef.b.", "Eist.",
+    "ElTeDe.", "Exüs.s.", "F.", "F.16.", "F.A.", "F.A.A.", "F.C.", "F.F.", "F.H.", "F.J.", "F.M.",
+    "F.S.", "F.X.", "F.Y.", "F.Z.", "F.İ.", "F.Ə.", "F2.1.", "Fut/san.", "FƏSİL.", "G.", "G.E.",
+    "G.H.H.", "G.R.", "G.S.", "G.S.U.", "GNKUR.", "Gar.", "H.", "H.A.", "H.B.", "H.C.", "H.F.",
+    "H.H.", "H.P.", "H.S.", "H.X.", "H.Z.", "H.İ.", "H.Ə.", "HA.", "Hab.", "Hb/tel.", "Hbey.tel.",
+    "Hbt.", "Hdx.", "He.", "Hes.", "Hint.", "Host.", "Htel.", "I-I.", "I.", "I.I.", "II.", "III-I.",
+    "III.", "IV.", "IX.", "Ii.", "Il.", "Iv.", "Ix.", "J.", "J.Amer.", "J.E.", "J.J.P.", "J.L.",
+    "J.M.", "J.V.", "K.", "K.B.", "K.M.", "K.Ş.", "KM.", "KMQ1.", "KMQ15.", "KMQ2.", "Kamort.",
+    "Khes.ist.", "Ko.", "Kt.i.", "Kub.", "Kva.", "L.", "L.-Ş.", "L.C.B.", "L.M.", "L.d.", "L.l.",
+    "L.İ.", "LI.", "LIII.", "LIV.", "LTD.", "LV.", "LVI.", "LX.", "LXI.", "LXII.", "LXIII.", "LXIV.",
+    "LXV.", "LXVI.", "LXVII.", "Ltd.", "M.", "M.A.", "M.B.", "M.C.", "M.C.M.", "M.F.", "M.H.",
+    "M.K.", "M.M.", "M.P.", "M.S.", "M.T.", "M.V.", "M.X.", "M.Y.", "M.Z.", "M.İ.", "M.Ş.", "M.Ə.",
+    "M/San.", "M7.", "MD.", "ML7.h.1.", "Mad.", "Mbs.", "Min.", "Mln.", "Məs.", "N.", "N.A.",
+    "N.B.", "N.C.", "N.F.", "N.H.", "N.K.", "N.K.M.", "N.R.", "N.U.", "N.V.", "N.İ.", "N1g.",
+    "N1gə.", "NYX.", "Na/xid.", "Navad.", "Nax.", "Nb/tel.", "Nbey.tel.", "Nbt.", "Nct.", "Ndt.",
+    "Ndəf./təsər.", "Ne.", "Nez.", "Nezam.", "Nint.", "Nma.", "Nmaş./avad.", "Nmaş./avad..",
+    "Nmaş.avad.", "Nmm.", "Nmət.", "Nnəq.", "No.", "Ntel.", "Nyan.", "Nys.", "Nyum.", "Nöt.",
+    "Nİ–bax.", "Nə.", "Nə.üst.", "Nərz.", "O.", "O.N.", "O.X.", "O.Z.", "Oil.Soc.", "P-2.", "P-2f.",
+    "P-3f.", "P-7f.", "P.", "P.D.", "P.E.E.", "P.Henn.", "P.J.", "P.M.", "P.O.", "PMO_1.", "PMO_2_1.",
+    "PMO_4.", "PMO_4_2.", "PMO_5.", "PMO_7.", "PROf.", "PTİ.", "PTİ.LTD.", "Phes.q.y.", "Prof.",
+    "Q.", "Q.A.", "Q.D.", "Qa.", "Qaqyh.", "Qavad.", "Qeyd.", "Ql/kab.", "Qma.", "Qmm.", "Qmə.",
+    "Qr.", "Qtm.", "Quater.", "Quin.", "Qxg.", "Qy.", "Qyd.", "Qyl.", "Qyum.", "Qəm.", "R.", "R.A.",
+    "R.B.", "R.C.", "R.E.", "R.H.", "R.K.", "R.M.", "R.Q.", "R.R.", "R.S.", "R.T.", "R.V.", "R.Z.",
+    "R.İ.", "R.Ş.", "R.Ə.", "REV.", "Ref.", "Resp.", "Respub.", "Rev.", "S.", "S.A.", "S.A.A.",
+    "S.A.L.", "S.C.", "S.H.", "S.J.", "S.M.", "S.N.", "S.R.", "S.R.L.", "S.S.", "S.T.", "S.c.",
+    "S.Ç.", "S.İ.", "SHg.", "SHg.g.d.", "ST.", "Sas.", "Savad.", "Sb/tel.", "Sbey.tel.", "Sbt.",
+    "Sdn.", "Set.", "Sex.", "Sez.", "Sezam.", "Sg.", "Sgün.", "Sint.", "Sl/kab.", "Sm.t.", "Sma.",
+    "Smm.", "Smə.", "Sn.", "Sov.", "Sr.", "St.", "Sta.", "Stel.", "Stm.", "Suşaq.", "Sy.", "Syl.",
+    "SÖg.", "Sç.", "Sçar.", "Süt.", "Sşag.", "Səh.", "Sət.", "T.", "T.A.", "T.F.", "T.K.", "T.M.",
+    "T.N.", "T.P.", "T.R.", "T.Y.", "T.İ.", "T.Ə.", "TIAXg.", "TSHg.", "TSÖg.", "TZTXg.", "Ter.",
+    "Thirumet.", "Tmiq.", "Tq.m.", "TİAXg.", "U.", "U.S.", "U.S.C.", "U.S.S.", "Usın.", "V-I.", "V.",
+    "V.A.", "V.B.", "V.D.", "V.H.", "V.J.", "V.Q.", "V.R.", "V.S.", "V.V.", "V.f.", "V.Ç.", "V.İ.",
+    "V.Ə.", "V/el.", "VI-II.", "VI.", "VII.", "VIII.", "Verein.", "Verh.", "Vi.", "Vl.", "Vll.", "X-I.",
+    "X-II.", "X.", "X.A.", "X.B.", "X.H.", "X.M.", "X.R.", "X.S.", "X.İ.", "XI-II.", "XI.", "XII-I.",
+    "XII.", "XIII.", "XIV.", "XIX.", "XL.", "XLII.", "XLIII.", "XLIX.", "XV.", "XVI.", "XVII.",
+    "XVIII.", "XX.", "XXI.", "XXII.", "XXIII.", "XXIV.", "XXV.", "XXVI.", "XXVII.", "XXX.",
+    "XXXI.", "XXXII.", "XXXIV.", "Xfakt.", "Xs.", "Y.", "Y.C.", "Y.K.", "Y.M.", "Y.Q.", "Y.T.",
+    "Y.V.", "Y.İ.", "Yn.", "Z.", "Z.Q.", "Z.R.", "Z.T.", "Z.Y.", "Z.Ə.", "ZA.", "a.", "a.c.", "a.f.",
+    "a.g.", "a.q.", "a.s.", "ad.", "akad.", "akt.", "alk.", "atas.", "atm.", "avad.", "b.", "b.3.",
+    "b.k.", "b/tel.", "bax.", "bis.", "c.", "c.p.", "cf.", "cüm.", "d.", "d.c.", "d.l.", "d.o.o.",
+    "d/dəq.", "diam.", "dok.", "dr.", "döv/dəq.", "düym.", "dəq.", "dər.", "e.", "e.h.q.", "e.m.f.",
+    "e.ə.", "f.", "fad.", "fam.", "fiq.", "fər.", "g.", "h.", "h.ş.", "hes.", "his.", "hə.", "i.",
+    "i.a.", "ii.", "iii.", "il.", "in.", "ist.", "iv.", "j.", "k.", "k.g.", "kVt.", "kab.", "kd.",
+    "km.", "kq.", "kq/kv.sm.", "kqs/kv.sm.", "kub.", "kub.m.", "kv.", "kv.m.", "kv.sm.", "kvt.",
+    "kvt.s.", "küç.", "l.", "lk.", "m-2.", "m.", "m.man.", "m.y.", "m/san.", "m3/san.", "mad.",
+    "maks.", "man.", "mayor.", "metr.", "min.", "mkr.", "ml.", "mld.", "mln.", "mlrd.", "mm.",
+    "mm/dəq.", "mq.l.", "məh.", "mən.", "məs.", "n.", "no.", "o.", "o.k.d.", "o.k.q.", "o.kv.",
+    "op.", "p.", "p.e.n.", "paq.", "pdf.", "poq.", "pp.", "ppm.", "pr.", "prof.", "q.", "q.r.",
+    "qar.", "qiy.", "qr.", "qsah.", "qəs.", "r.", "r.m.s.", "rad.", "resp.", "rub.", "rüb.", "s.",
+    "s.a.", "s.a.a.", "s.a.a.a.", "s.c.", "s.c./d.c.", "s.r.o.", "sair.", "san.", "sex.", "sm.",
+    "sp.", "ss.", "st.", "süt.", "səh.", "sər.", "sət.", "t.", "t.g.", "t/h.", "tel.", "tn.kq.ədəd.",
+    "tor.", "trln.", "təqr.", "təxm.", "təş.", "v.", "v.s.", "v.ü.", "var.", "vasit.", "vs.", "və.",
+    "və.s.", "və.s...", "zərbə/dəq.", "Ç.", "Ö.", "ÖEŞtex.itki.", "Ü.", "Ü.H.", "Üz.", "ç.", "Ğ.",
+    "İ.", "İ.B.", "İ.D.", "İ.F.", "İ.H.", "İ.M.", "İ.N.", "İ.R.", "İAXg.", "İNK.", "İnc.", "İnk.",
+    "İnternat.", "İnv.", "Ş.", "Ş.H.", "Ş.K.", "Ş.M.", "Ş.Ş.", "Ş.Ə.", "Şək.", "Şəkil.", "ş.", "şəh.",
+    "şək.", "Ə.", "Ə.A.", "Ə.H.", "Ə.M.", "Ə.Q.", "Ə.R.", "Ə.T.", "Ə.Y.", "Ə.İ.", "Ə.Ş.", "Ə.Ə.",
+    "Ə2.", "ƏDV.", "Əamort.", "Əeh.ct.", "Əinf.", "Əməl.", "Əor.", "Əs.", "ə.", "əlavə.", "əms.",
+    "əməl.", "əs.", "əsas.", "В.1.", "С.", "№tel."
+]
 
-# --- Unit & measurement abbreviations ---
-"km.", "kq.", "sm.", "mm.", "mq.", "mln.", "mlrd.", "man.", "qəp.", "kv.", "kV.",
-"kVt.", "kub.", "qr.", "qrup.", "tn.", "uçot.",
-
-# --- Time, numbering ---
-"s.", "səh.", "dəq.", "No.",
-
-# --- Titles, professions, roles ---
-"prof.", "Prof.", "Dr.", "dr.", "Sov.", "İmza.", "İdx.", "Tel.", "tel.",
-
-# --- Organizations / institutions ---
-"ASC.", "QSC.", "PLC.", "CO.", "Co.", "PR.", "GOV.", "gov.", "AZ.", "IIQR.",
-"QOŞMA.", "XHK.", "XAKS.", "İNF.", "PM.", "TRDM.", "INK.", "İNK.", "KM.", "MY.",
-"II.", # occasionally institutional section
-
-# --- Common Azerbaijani print shorthand ---
-"şək.", "süt.", "hes.", "resp.", "şəh.", "akt.", "məs.", "mad.", "sətr.",
-"şüşə.", "otaq.", "otağ.", "şək.", "bank.", "plan.", "zona.", "zərf.", "əms.",
-"faiz.", "üzrə.", "üzvü.",
-
-# --- Foreign / technical abbreviations ---
-"www.", "org.", "Org.", "etc.", "edu.", "Ltd.", "off.", "Rec.", "Doc.",
-
-# --- Russian abbreviations found in corpus ---
-"г.", "Г.", "гор.", "тыс.", "млн.", "руб.", "СССР.", "АЭС.",
-
-# --- Mixed-case and special uppercase abbreviations ---
-"AZ.", "KM.", "PR.", "QME.", "MY.", "FH.", "WİF.", "PLC.", "ATM.", "TYK.", "KM.",
-"Borca.", "BORCU.",
-
-# --- Uppercase short abbreviations (heuristic-selected) ---
-"A.", "M.", "S.", "F.", "T.", "R.", "N.", "H.", "B.", "E.", "Ə.", "C.", "X.",
-"Ş.", "Z.", "W.", "P.", "G.", "L.", "Ü.", "Ç.", "Q.", "İ.", "U.", "J.", "O.",
-
-# --- Multi-letter uppercase abbreviations found ---
-"GOV.", "CO.", "AZ.", "ASC.", "QSC.", "PLC.", "PR.", "QME.", "WİF.", "Süt.",
-"Sov.", "IIQR.", "II.", "MY.", "KM.", "PM.", "TRDM.", "INK.", "İNK."]
 
 # Enumeration patterns - used to detect list items
 LIST_MARKERS = [

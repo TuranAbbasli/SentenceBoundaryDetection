@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from utils.constants import SENTENCE_TAG, CONFUSABLE_MAP, ALLOWED_AZ_CHARS
+from azcharboundary.utils.constants import SENTENCE_TAG, CONFUSABLE_MAP, ALLOWED_AZ_CHARS
 
 def preprocessing(data_dir: Path) -> list[dict]:
     """
@@ -30,41 +30,31 @@ def preprocessing(data_dir: Path) -> list[dict]:
                 print(f"Skipping invalid JSON on line {i}: {e}")
                 continue
 
-            sentences: list[str] = next(iter(data.values())) # first value from key-value pairs
+            chunk = data.get("input")
 
-            if not sentences:
+            if not chunk:
                 print(f'Empty value in generation data on line: {i}.')
                 continue
             
-            updated_sentences: list[str] = []
-            for sentence in sentences:  # further splitting sentences of a chunk
-                for s in sentence.split('\n'):
-                    s = s.strip()
-                    s = ''.join(CONFUSABLE_MAP.get(char, char) for char in s)  # fix confusables
+            chunk = ''.join(CONFUSABLE_MAP.get(char, char) for char in chunk) 
 
-                    # check CharValidness of sentence
-                    valid_sentence = True
-                    for char in s:
-                        if char.isalpha():
-                            if char not in ALLOWED_AZ_CHARS:
-                                valid_sentence = False
-                                break
+            valid_chunk = True
+            for char in chunk:
+                if char.isalpha():
+                    if char not in ALLOWED_AZ_CHARS:
+                        valid_chunk = False
+                        break
                             
-                    if valid_sentence:  # skip non-valid sentence
-                        updated_sentences.append(s)
-
-            training_data = {
-                "input": " ".join(updated_sentences),
-                "output": f"{SENTENCE_TAG} ".join(updated_sentences)
-            }
-            preprocessed_data.append(training_data)
+            if valid_chunk:  # skip non-valid sentence
+                data["input"] = chunk
+                preprocessed_data.append(data)
 
         return preprocessed_data
     
 if __name__ == "__main__":
-    input_dir = Path(r'generation\results.jsonl')
+    input_dir = Path('azcharboundary/data/train_data_labeled_types_abbr_cleaned.jsonl')
     preprocessed = preprocessing(data_dir=input_dir)
-    output_dir = Path(r'azcharboundary\data\data.jsonl')
+    output_dir = Path('azcharboundary/data/train_data_labeled_types_abbr_cleaned_fixed.jsonl')
 
     with open(output_dir, "w", encoding="utf-8") as f_out:
         for item in preprocessed:
