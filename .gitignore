@@ -30,3 +30,5 @@ corpus.txt
 # SBD
 charboundary
 *.so
+
+data/

@@ -1,24 +1,66 @@
 ASSISTANT_TEMPLATE="""
-You are a text analysis assistant specialized in identifying abbreviations in Azerbaijani legal documents.
+You are an Azerbaijani legal-text analysis assistant that performs two tasks:
+1) Extract abbreviations.  
+2) Identify types of non-terminal periods.
 """
 
 PROMPT_TEMPLATE="""
-TASK:
-Identify and extract all abbreviations from the provided text exactly as they appear.
+You will receive a text chunk where true sentence boundaries are marked with <|sentence|>.
+Any period "." not followed by <|sentence|> is a non-terminal.
 
-STRICT RULES:
-1. An item is considered an abbreviation only if BOTH conditions are true:
-   • It is a shortened form of a word, institutional name, or a person's name.
-   • It contains dot within the word, either inside the word or at the end of word.
-2. Extract only those items that satisfy these two conditions.
-3. Preserve each abbreviation exactly as written, including casing and punctuation.
-4. Do not include full words, particles, symbols, numeric codes, or any term that is not a true shortened form ending with a dot.
+Perform BOTH tasks:
 
-OUTPUT REQUIREMENT:
-Return only a JSON array with the extracted abbreviations and nothing else.
+----------------------------------------
+TASK 1 — EXTRACT ABBREVIATIONS
+----------------------------------------
+Extract items that:
+- contain a dot, AND
+- are shortened forms of words, institutions, or names.
 
-FORMAT:
-["abbr1.", "abbr2.", "abbr3."]
+Preserve exact casing and punctuation.
 
+Do NOT return: full words, numeric values, or anything without a dot.
+Examples: "QÇMŞ.", "trily.", "A.M.", "b.", "prof."
+
+----------------------------------------
+TASK 2 — CLASSIFY NON-TERMINAL PERIODS
+----------------------------------------
+For each token ending with a non-terminal ".", determine its type:
+
+- **"num"** → numeric enumerations.
+   - Examples: "X.", "223.", "45.2."
+- **"abbr"** → abbreviations from Task 1 used non-terminally.
+- **"date"** → Dates containing dots that are not sentence boundaries.
+   - Examples: "21.05.2023", "15.03.2024-cü".
+- **"citation"**
+   - Legal citations, article references, or structural markers kept within a sentence.
+   - Includes any dotted number that follows legal labels such as “Maddə”, “Bölmə”, “Fəsil”, and similar.
+   - Examples: “Maddə 5.”, “Bölmə III.”, “Maddə 40-1.”, Fəsil 41.”
+-  **list_marker**
+   - Dotted list indicators or enumeration markers inside lists that do NOT end sentences.
+-  **other**
+   - Any other non-terminal period that doesn't fit the above categories.
+
+Return only the unique type labels present in the text.
+
+
+For each input chunk in the list, return one JSON object in the same order.
+----------------------------------------
+OUTPUT FORMAT (STRICT)
+Return ONLY a JSON array of objects. One object per input chunk.
+
+[
+  {
+    "abbr": [...],
+    "types": [...]
+  },
+  ...
+]
+----------------------------------------
+INPUT
 {chunk}
+
+----------------------------------------
+OUTPUT
+Return only the JSON object above.
 """
