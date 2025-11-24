@@ -120,5 +120,5 @@ def test_inference(model_dir: str) -> float:
 
 
 if __name__ == "__main__":
-    model_path = "azcharboundary/trained_models/v2/checkpoint.tl"
+    model_path = "azcharboundary/trained_models/v3/checkpoint.tl"
     test_inference(model_dir=model_path)

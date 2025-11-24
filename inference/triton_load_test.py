@@ -13,14 +13,14 @@ from azcharboundary.utils.features import FeatureExtractor
 TRITON_URL = "localhost:8001"
 MODEL_NAME = "model"
 
-INPUT_NAME = "input"
+INPUT_NAME = "input__0"
 OUTPUT_NAME = "output"
 FEATURE_DIM = 19
 NETWORK_TIMEOUT = 60.0
 
 CONCURRENCY = 10                                   # fixed concurrency
   
-BATCH_SIZE = 1                                     # how many chunks merged into ONE Triton request
+BATCH_SIZE = 500                                   # how many chunks merged into ONE Triton request
 BASE_TOTAL_CHUNKS = 100_000                        # target total logical chunks
 NUM_REQUESTS = BASE_TOTAL_CHUNKS // BATCH_SIZE     # Triton requests to send
 

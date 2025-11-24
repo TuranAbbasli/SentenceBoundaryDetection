@@ -15,10 +15,10 @@ MODEL_NAME: str = "model"
 # Connection configuration
 NETWORK_TIMEOUT = 60.0  # seconds
 
-# Model I/O configuration
+# Model I/O configuration (do NOT change names!)
 INPUT_NAME = "input__0"
 OUTPUT_NAME = "output__0"
-FEATURE_DIM = 19
+FEATURE_DIM = 27
 
 # Single global feature extractor instance reused across calls
 feature_extractor = FeatureExtractor()
@@ -26,8 +26,8 @@ feature_extractor = FeatureExtractor()
 
 def preprocessing(
     text: str,
-    left_window: int = 5,
-    right_window: int = 5,
+    left_window: int = 9,
+    right_window: int = 9,
 ) -> Tuple[Optional[List[grpcclient.InferInput]],
            Optional[List[grpcclient.InferRequestedOutput]],
            List[int]]:
@@ -123,6 +123,10 @@ def postprocessing(
     # probs[:, 0] = p(class 0), probs[:, 1] = p(class 1)
     labels_np = (probs[:, 1] > probs[:, 0]).astype(np.int32)
     labels: List[int] = labels_np.tolist()
+
+    print(positions)
+    print(probs)
+    print(labels)
 
     result = list(text)
 
@@ -246,8 +250,9 @@ def warmup_model(
 
 def test_inference() -> float:
     """
-    Run a suite of test cases against the Triton FIL model,
-    using local preprocessing and postprocessing.
+    Run the same 5 sequential test cases as in the local TextSegmenter
+    inference.py against the Triton FIL model, using local preprocessing
+    and postprocessing.
 
     Reports timing per case and aggregate statistics.
 
@@ -285,145 +290,111 @@ def test_inference() -> float:
 
         suite_start = time.time()
 
-        # =======================
-        # Define all test cases
-        # =======================
-
-        text_legal = (
-            "Azərbaycan Respublikası Konstitusiyasının 32-ci maddəsinə əsasən, "
-            "hər kəsin şəxsi və ailə həyatına hörmət hüququ vardır. "
-            "Heç kəs şəxsi məlumatlarının qanunsuz toplanmasına və yayılmasına məruz qala bilməz. "
-            "Məhkəmə qərarı olmadan şəxsin telefon danışıqlarına nəzarət edilməsi qadağandır."
-        )
-        all_metrics.append(run_case(client, text_legal, "Legal domain"))
-
-        text_general = (
-            "Bu gün hava çox gözəldir. Səhər tezdən külək əsirdi, amma indi sakitdir. "
-            "Axşam yağış yağacağı proqnozlaşdırılır."
-        )
-        all_metrics.append(run_case(client, text_general, "General domain"))
-
-        text_long = (
-            "Azərbaycan iqtisadiyyatı son illərdə sürətli inkişaf edir. "
-            "Bu inkişaf müxtəlif sahələrdə özünü göstərir. "
-            "Xüsusilə texnologiya, təhsil və enerji sektorunda ciddi dəyişikliklər var. "
-            "Bir çox startaplar yaranır, dövlət innovasiyalara investisiya edir. "
-            "Bu proses ölkənin rəqəmsal transformasiyasını daha da gücləndirir."
-        )
-        all_metrics.append(run_case(client, text_long, "Long text (stress test)"))
-
-        text_short = "Salam dünya."
-        all_metrics.append(run_case(client, text_short, "Short text"))
-
-        text_punct = "Bu nədir?! Siz bunu gördünüzmü?! Yox, inanmıram..."
-        all_metrics.append(run_case(client, text_punct, "Heavy punctuation"))
-
-        text_legal_phrases = (
-            "a) Müqavilənin ləğvi; b) tərəflərin razılığı; c) məhkəmə qərarı; "
-            "ç) müflislik elan edilməsi; d) qanunvericiliyin dəyişməsi; "
-            "e) əhəmiyyətli şərtlərin pozulması; ə) gecikmiş öhdəlik; "
-            "f) tərəflərin məsuliyyəti."
-        )
-        all_metrics.append(
-            run_case(client, text_legal_phrases, "Legal domain — list of phrases")
-        )
-
-        text_legal_list_sentences = (
-            "1) Müqavilə yalnız yazılı formada bağlandıqda etibarlı sayılır. "
-            "2) Tərəflər müqavilə üzrə öhdəliklərini vicdanla yerinə yetirməlidirlər. "
-            "3) Mübahisələr danışıqlar yolu ilə həll edilmədikdə, məhkəməyə müraciət oluna bilər. "
-            "4) Tərəflər arasında yaranan ziyan, qanunvericiliyə uyğun olaraq kompensasiya edilir. "
-            "5) Müqavilənin müddəti bitdikdə, tərəflərin yazılı razılığı ilə uzadıla bilər."
+        # CASE 1 — Legal contract, dates, abbreviations, mixed list styles
+        text_case_1 = (
+            "Bu Müqavilə 12.05.2015-ci il tarixdə Bakı şəh., AZ0000, Nizami k., 15 ünvanında "
+            "“Alpha Consulting” MMC (bundan sonra — “Podratçı”) və “Beta Group” ASC "
+            "(bundan sonra — “Müştəri”) arasında imzalanmışdır. "
+            "Müqavilə AR Mülki Məcəlləsinin 422.1-ci maddəsinə, həmçinin AR Konstitusiyasının 32-ci maddəsinə uyğun "
+            "olaraq tənzimlənir. "
+            "Tərəflərin hüquq və vəzifələri aşağıdakı kimidir: "
+            "a) Podratçı işləri 01.06.2015-dək tam həcmdə yerinə yetirməlidir; "
+            "b) Müştəri 10 (on) bank günü ərzində ödənişi həyata keçirməlidir; "
+            "c) Force majeure (təbii fəlakət, müharibə və s.) hallarında məsuliyyət istisna olunur; "
+            "ç) tərəflər arasında yaranan dispute əvvəlcə negotiation yolu ilə həll edilir. "
+            "Müqavilə müddəti bitdikdən sonra tərəflərin yazılı razılığı (e-mail, faks və ya imzalı məktub) "
+            "olmadan avtomatik uzadılmış sayılmır."
         )
         all_metrics.append(
             run_case(
                 client,
-                text_legal_list_sentences,
-                "Legal domain — numbered list of sentences",
+                text_case_1,
+                "Case 1 — Contract + lists + dates",
             )
         )
 
-        text_legal_long_sentence = (
-            "İddiaçı iddia ərizəsində göstərmişdir ki, cavabdeh tərəfindən "
-            "müqavilə öhdəliklərinin vaxtında yerinə yetirilməməsi nəticəsində ona "
-            "maddi ziyan dəymiş, bu ziyanın məbləği isə müstəqil auditor rəyi ilə "
-            "təsdiq edilmişdir və həmin məbləğin, həmçinin gecikdirməyə görə hesablanmış "
-            "dəbbə pulu və məhkəmə xərclərinin cavabdehdən tutulmasını xahiş etmişdir."
+        # CASE 2 — Court decision with numbered paragraphs, internal abbreviations and mixed punctuation
+        text_case_2 = (
+            "Bakı Apellyasiya Məhk. məhkəmə heyəti, hakim İ.Xəlilovun sədrliyi ilə açıq məhkəmə iclasında "
+            "iddiaçı A.A.-nın cavabdeh “Gamma” MMC-yə qarşı iddiası üzrə işi baxaraq müəyyən etdi ki, "
+            "mübahisə predmeti 15.09.2019-cu il tarixli satınalma müqaviləsinin icrası ilə bağlıdır. "
+            "1) İddiaçı bildirmişdir ki, cavabdeh öhdəliyi vaxtında yerinə yetirməyib, nəticədə 5 000 (beş min) manat "
+            "maddi ziyan dəymişdir; 2) Cavabdeh isə, öz növbəsində, öhdəliyin pozulmasını force majeure ilə əsaslandırmış, "
+            "lakin bu barədə hər hansı rəsmi sübut (sertifikat, akt və s.) təqdim etməmişdir. "
+            "Məhkəmə hesab edir ki, cavabdehin arqumentləri əsassızdır... "
+            "Nəticə etibarilə, iddia qismən təmin edilir?! "
+            "Qərar elan olundu və tərəflərə izah edildi ki, qərardan 1 (bir) ay müddətində 6m. Əməl. kassasiya şikayəti verilə bilər."
         )
         all_metrics.append(
             run_case(
                 client,
-                text_legal_long_sentence,
-                "Legal domain — single long sentence",
+                text_case_2,
+                "Case 2 — Court decision, numbered items",
             )
         )
 
-        text_legal_abbrev = (
-            "AR Mülki Məcəlləsinin 422.1-ci maddəsinə əsasən, müqavilə tərəflərinin "
-            "öz öhdəliklərini lazımi qaydada yerinə yetirməsi məcburidir. "
-            "Eyni Məcəllənin 439.2-ci maddəsinə görə, borclu öhdəliyi yerinə yetirmədikdə, "
-            "kreditor ona qarşı məhkəməyə müraciət edə bilər. Bu halda 5 mlyn. cərimə tətbiq olur."
-            "Bu Qanun və digər normativ-hüquqi aktlar (o cümlədən, \"İstehlakçıların hüquqlarının müdafiəsi haqqında\" Qanun) "
-            "istehlakçıların mənafeyini qorumağa yönəlib."
+        # CASE 3 — Mixed language, percentages, times, inline list items, tricky abbreviations
+        text_case_3 = (
+            "12.03.2020 tarixli kredit müqaviləsinə (№ KM-2020/03-12) əsasən, borc məbləği 75 000 (yetiş beş min) manat "
+            "təyin edilmişdir. İllik faiz dərəcəsi 18,5% olaraq müəyyən edilib; gecikmə halında isə əlavə 0,1% dəbbə pulu "
+            "hesablanır. "
+            "Clause 5.2-də qeyd olunur: \"Borc veren shall provide audited financial statements\" — lakin azərbaycanca "
+            "versiyada “audit edilmiş maliyyə hesabatı” ifadəsi istifadə olunmuşdur. "
+            "Saat 10:30-da tərəflər bankın mərkəzi ofisində (Bakı ş., Heydər Əliyev pr., 10) görüşərək aşağıdakıları "
+            "razılaşdırmışlar: (i) ödəniş qrafiki yenidən tərtib olunur; (ii) 3 (üç) ay müddətinə grace period tətbiq edilir; "
+            "(iii) borcalanın əlavə təminat təqdim etməsi tələb edilmir. "
+            "Bu protokol, Bank Nəzarəti Şöb., həmçinin Risk Dept. tərəfindən də təsdiq edilib."
         )
         all_metrics.append(
             run_case(
                 client,
-                text_legal_abbrev,
-                "Legal domain — abbreviations & article refs",
+                text_case_3,
+                "Case 3 — Mixed language, %, times, lists",
             )
         )
 
-        text_legal_quotes = (
-            "Məhkəmə qərarında qeyd edilir ki, \"tərəflər arasında bağlanmış müqavilə "
-            "bozucu şərt həyata keçənədək qüvvədə qalır\". "
-            "Hakim belə nəticəyə gəlmişdir ki, cavabdehin hərəkətləri "
-            "(öhdəliyin qəsdən yerinə yetirilməməsi və qarşı tərəfin ziyana salınması) "
-            "qanunvericiliyin tələblərinə ziddir — bu halda, əlavə məsuliyyət tədbirləri tətbiq oluna bilər."
-        )
-        all_metrics.append(
-            run_case(client, text_legal_quotes, "Legal domain — quotes & parentheses")
-        )
-
-        text_legal_mixed = (
-            "2019-cu il 15 mart tarixli kredit müqaviləsinə əsasən, borc məbləği "
-            "50 000 (əlli min) manat müəyyən edilmiş, illik faiz dərəcəsi isə 18% olmuşdur. "
-            "Müqavilənin 7.2-ci bəndinə görə, borcalan 30 (otuz) gün ərzində ödənişi "
-            "etmədikdə, bank gecikdirilmiş hər günə görə əlavə 0.1% dəbbə pulu hesablayır. "
-            "Tərəflər arasında bu müddəa ilə bağlı hər hansı yazılı etiraz qeydə alınmamışdır."
+        # CASE 4 — Long narrative, quotes, parentheses, ellipses, heavy punctuation, fake sentence-like abbreviations
+        text_case_4 = (
+            "Məhkəmə iclasında cavabdeh belə demişdir: \"Mən müqaviləni oxumuşam, lakin oradakı ‘7.2-ci bənd’ "
+            "mənə aydın olmayıb\". Hakim sual verir: \"Siz hüquqşünasla məsləhətləşmisinizmi?!\" "
+            "Cavabdeh cavab verir ki, o, yalnız tanışı olan bir mütəxəssislə (prof. S.Əliyev) qısa müzakirə aparıb, "
+            "lakin rəsmi legal opinion almamışdır. "
+            "Zalda olan nümayəndə (şirk. nümay., yəni rəsmi təmsilçi) isə bildirir ki, tərəflər arasında "
+            "‘gentlemen’s agreement’ də olub... Lakin bu, yazılı formada təsdiq edilməyib. "
+            "Hakim qeyd edir ki, belə informal razılaşmalar AR qanunvericiliyində ayrıca təsbit olunmayıb, "
+            "bu səbəbdən də məhk. onları hüquqi əsas kimi qəbul etmir. "
+            "Bu halda, yalnız müqavilənin mətni, əlavə razılaşmalar (Annex 1, Annex 2 və s.) və tərəflərin faktiki davranışı "
+            "nəzərə alınır."
         )
         all_metrics.append(
             run_case(
                 client,
-                text_legal_mixed,
-                "Legal domain — dates, numbers, percentages",
+                text_case_4,
+                "Case 4 — Quotes, ellipses, fake endings",
             )
         )
 
-        text_legal_many_short = (
-            "İddia rədd edilir. Apellyasiya şikayəti təmin olunmur. "
-            "Qərar elan olundu. Tərəflərə izah edildi. "
-            "Qərardan kassasiya qaydasında şikayət vermək hüququ saxlanılır!"
+        # CASE 5 — Mixed obligations, bullets, broken structures, dates and no-punct fragments
+        text_case_5 = (
+            "“Delta Logistic” MMC ilə bağlanmış 05.11.2018-ci il tarixli xidmət müqaviləsinin 3-cü bölməsi "
+            "öhdəliklərin icrasına həsr olunmuşdur. Bölmə aşağıdakı bəndlərdən ibarətdir: "
+            "1) Podratçı yükün təhlükəsiz daşınmasını təmin etməlidir — yük itdikdə və ya zədələndikdə, "
+            "Mülki Məcəllənin 921-ci maddəsinə uyğun olaraq məsuliyyət daşıyır; "
+            "2) Müştəri xidmət haqqını 30 (otuz) təqvim günü ərzində ödəməlidir; "
+            "3) tərəflər aşağıdakı hallarda müqaviləni birtərəfli qaydada ləğv edə bilərlər: "
+            "a) müflislik elan edilməsi; b) 60 gündən artıq gecikmə; c) qanunvericiliyin dəyişməsi nəticəsində "
+            "müqavilənin icrasının faktiki olaraq mümkünsüz olması. "
+            "Bundan əlavə, qeydlər bölməsində belə yazılmışdır: "
+            "“Əlavə xidmətlər göstərilə bilər qiymət sonradan razılaşdırılır hər bir tərəf bu barədə əvvəlcədən yazılı "
+            "məlumat təqdim etməlidir” — cümlə ardıcıllığı pozulmuş, nöqtə və vergüllər isə, praktiki olaraq, "
+            "heç yerdə qoyulmamışdır. "
+            "Sonda 01.01.2019 tarixli əlavə razılaşma ilə qiymətlər 10% artırılmış, lakin əvvəlki qrafik dəyişdirilməmişdir."
         )
         all_metrics.append(
             run_case(
                 client,
-                text_legal_many_short,
-                "Legal domain — many short sentences",
-            )
-        )
-
-        text_legal_mixed_lang = (
-            "Bu müqavilə Azərbaycan Respublikası qanunvericiliyinə uyğun olaraq tənzimlənir. "
-            "Hər hansı dispute tərəflər arasında negotiation yolu ilə həll edilmədikdə, "
-            "mübahisə Bakı Kommersiya Məhkəməsində arbitration istisna olunmaqla baxılır. "
-            "Force majeure hallarına təbii fəlakətlər, müharibə və hökumət qərarları daxildir."
-        )
-        all_metrics.append(
-            run_case(
-                client,
-                text_legal_mixed_lang,
-                "Legal domain — mixed language & terms",
+                text_case_5,
+                "Case 5 — Bullets, broken text, dates",
             )
         )
 

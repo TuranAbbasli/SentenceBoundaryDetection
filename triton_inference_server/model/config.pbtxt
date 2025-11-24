@@ -4,15 +4,15 @@ max_batch_size: 0
 
 input [
   {
-    name: "input"
+    name: "input__0"        # dont change
     data_type: TYPE_FP32
-    dims: [ 19 ]       # per-sample feature size; batch dim will be added by Triton
+    dims: [ -1, 27 ]       # per-sample feature size; batch dim will be added by Triton
   }
 ]
 
 output [
   {
-    name: "output"
+    name: "output__0"       # dont change
     data_type: TYPE_FP32
     dims: [ 2 ]        # per-sample [p0, p1]; batch dim added by Triton
   }
@@ -20,7 +20,7 @@ output [
 
 instance_group [
   {
-    kind: KIND_GPU
+    kind: KIND_AUTO
     count: 1
   }
 ]
