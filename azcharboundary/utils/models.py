@@ -379,9 +379,12 @@ class FeatureSelectedRandomForestModel(BinaryRandomForestModel):
 
         # Get feature importances
         self.feature_importances = self.model.feature_importances_
+        print(f'Feature importances: {self.feature_importances}')
 
         # Select important features
         selected_features = self._select_important_features(self.feature_importances)
+        print(f'Selected feature indices: {selected_features}')
+        
         num_selected = len(selected_features)
         total_features = len(self.feature_importances)
         print(
