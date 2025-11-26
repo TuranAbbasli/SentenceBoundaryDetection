@@ -21,7 +21,7 @@ Modify these parameters to train a new model. Window sizes, thresholds, sample r
 
 ## Inference with NVIDIA Triton
 
-Inference is served using NVIDIA Triton Inference Server, which accelerates execution with GPU or CPU support. Docker Compose is used to run the server.
+Inference is served using NVIDIA Triton Inference Server, which accelerates execution with GPU or CPU support. Docker Compose is used to run the server. Triton image version: 25.11 
 
 ### Folder Structure
 
@@ -31,7 +31,8 @@ Your model should be placed inside a directory named model:
     ├─ docker-compose.yml
     └─ model/
        ├─ config.pbtxt
-       └─ [model files]
+       └─ 1
+           └─ checkpoint.tl
 
 The compose file mounts this directory as the Triton model repository.
 
