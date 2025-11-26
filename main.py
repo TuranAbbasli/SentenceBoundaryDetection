@@ -117,12 +117,12 @@ def train_segmenter(segmenter: TextSegmenter, train_set: Iterable[str]) -> Metri
     train_start = time.time()
     training_metrics = segmenter.train(
         data=train_set,
-        model_params={"n_estimators": 64, "max_depth": 16},
+        model_params={"n_estimators": 128, "max_depth": 32},
         sample_rate=0.001,          # Increase sample rate to get better class balance
-        left_window=9,              # Specify window sizes during training
-        right_window=9,
-        threshold=0.5,
-        use_feature_selection=True,
+        left_window=5,              # Specify window sizes during training
+        right_window=5,
+        threshold=0.8,
+        use_feature_selection=False,
         feature_selection_threshold=0.01,
         max_features=20,
     )

@@ -18,7 +18,7 @@ NETWORK_TIMEOUT = 60.0  # seconds
 # Model I/O configuration (do NOT change names!)
 INPUT_NAME = "input__0"
 OUTPUT_NAME = "output__0"
-FEATURE_DIM = 27
+FEATURE_DIM = 20
 
 # Single global feature extractor instance reused across calls
 feature_extractor = FeatureExtractor()
@@ -26,8 +26,8 @@ feature_extractor = FeatureExtractor()
 
 def preprocessing(
     text: str,
-    left_window: int = 9,
-    right_window: int = 9,
+    left_window: int = 5,
+    right_window: int = 5,
 ) -> Tuple[Optional[List[grpcclient.InferInput]],
            Optional[List[grpcclient.InferRequestedOutput]],
            List[int]]:

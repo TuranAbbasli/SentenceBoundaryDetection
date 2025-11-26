@@ -14,13 +14,13 @@ TRITON_URL = "localhost:8001"
 MODEL_NAME = "model"
 
 INPUT_NAME = "input__0"
-OUTPUT_NAME = "output"
-FEATURE_DIM = 19
+OUTPUT_NAME = "output__0"
+FEATURE_DIM = 27
 NETWORK_TIMEOUT = 60.0
 
-CONCURRENCY = 10                                   # fixed concurrency
+CONCURRENCY = 12                                   # fixed concurrency
   
-BATCH_SIZE = 500                                   # how many chunks merged into ONE Triton request
+BATCH_SIZE = 1                                   # how many chunks merged into ONE Triton request
 BASE_TOTAL_CHUNKS = 100_000                        # target total logical chunks
 NUM_REQUESTS = BASE_TOTAL_CHUNKS // BATCH_SIZE     # Triton requests to send
 
@@ -37,7 +37,7 @@ def extract_features(text: str) -> np.ndarray:
     if not indices:
         return np.empty((0, FEATURE_DIM), np.float32)
 
-    feats = feature_extractor.get_char_features(text, 5, 5, positions=indices)
+    feats = feature_extractor.get_char_features(text, 9, 9, positions=indices)
     arr = np.asarray(feats, np.float32)
 
     if arr.ndim == 1:

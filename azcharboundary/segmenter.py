@@ -2,6 +2,7 @@
 Base text segmentation functionality for the charboundary library.
 """
 import time
+import numpy as np
 from tqdm import tqdm
 from functools import lru_cache
 import skops.io as sio
@@ -355,7 +356,7 @@ class TextSegmenter:
         """
         model = self.model.get_model()
 
-        if serialization_format.lower() == "treelite":        
+        if serialization_format.lower() == "treelite":
             model = treelite.sklearn.import_model(model)
             model.serialize(path)
 

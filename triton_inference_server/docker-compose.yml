@@ -1,6 +1,6 @@
 services:
   triton:
-    image: nvcr.io/nvidia/tritonserver:24.03-py3
+    image: nvcr.io/nvidia/tritonserver:25.11-py3
     container_name: triton_sbd_server
     ports:
       - "8000:8000"  # HTTP
