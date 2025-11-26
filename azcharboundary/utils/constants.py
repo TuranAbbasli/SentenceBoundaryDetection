@@ -319,6 +319,61 @@ DEFAULT_ABBREVIATIONS = [
     "İnternat.", "İnv.", "Ş.", "Ş.H.", "Ş.K.", "Ş.M.", "Ş.Ş.", "Ş.Ə.", "Şək.", "Şəkil.", "ş.", "şəh.",
     "şək.", "Ə.", "Ə.A.", "Ə.H.", "Ə.M.", "Ə.Q.", "Ə.R.", "Ə.T.", "Ə.Y.", "Ə.İ.", "Ə.Ş.", "Ə.Ə.",
     "Ə2.", "ƏDV.", "Əamort.", "Əeh.ct.", "Əinf.", "Əməl.", "Əor.", "Əs.", "ə.", "əlavə.", "əms.",
+    "əməl.", "əs.", "əsas.", "В.1.", "С.", "№tel.",
+
+
+    # Added abbreviations
+    "trlyn.",       # Alternative spelling
+    "trilyon.",     # Full word abbreviated
+    "trl.",
+
+    "miln.",        # Alternative spelling
+    "milyon.",      # Full word abbreviated
+    "mil.",         # Short form
+
+    "mlyd.",        # Alternative spelling
+
+    "mlyrd.",       # Alternative spelling
+    
+
+    "Nr.",          # European style
+    "Nö.",          # Short Azerbaijani
+    "nr.",          # Lowercase European
+    "nö.",          # Lowercase short
+
+    "sny.",         # Short form
+
+    "lt.",          # Alternative
+
+    # Lisenziya (License)
+    "Lic.", "lic.",
+
+    # Dosent (Associate Professor)
+    "Dos.", "dos.",
+
+    # International academic degrees
+    "Ph.D.",        # Doctor of Philosophy
+    "M.Sc.",        # Master of Science
+    "B.Sc.",        # Bachelor of Science
+
+    # Mühəndis (Engineer)
+    "Müh.", "müh.",
+
+
+    "kv.km.",       # Square kilometer
+    "kub.km.",      # Cubic kilometer
+    "kub.sm.",      # Cubic centimeter
+
+
+    "kV.",          # Kilovolt
+    "MV.",          # Megavolt
+    "mV.",          # Millivolt
+    "mA.",          # Milliampere
+    "kA.",          # Kiloampere
+    "W.",           # Watt
+    "mW.",          # Milliwatt
+    "GW.",          # Gigawatt
+
     "əməl.", "əs.", "əsas.", "В.1.", "С.", "№tel.", "Məhk.", "Dept.",
 ]
 
