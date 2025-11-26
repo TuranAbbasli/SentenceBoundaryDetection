@@ -337,21 +337,6 @@ class TextSegmenter:
             features.append(feature)
             labels.append(label)
 
-    def convert_rf_to_fp32(rf):
-        """FUnction to convert rf model to fp32 type"""
-        for estimator in rf.estimators_:
-            tree = estimator.tree_
-
-            # Convert thresholds and node values to float32
-            tree.threshold = tree.threshold.astype(np.float32)
-            tree.value = tree.value.astype(np.float32)
-
-            # Convert feature importances (optional)
-            if hasattr(estimator, "feature_importances_"):
-                estimator.feature_importances_ = estimator.feature_importances_.astype(np.float32)
-
-        return rf
-
     def save(
         self,
         path: str,
@@ -372,7 +357,6 @@ class TextSegmenter:
         model = self.model.get_model()
 
         if serialization_format.lower() == "treelite":
-            model = self.convert_rf_to_fp32(model)        
             model = treelite.sklearn.import_model(model)
             model.serialize(path)
 
