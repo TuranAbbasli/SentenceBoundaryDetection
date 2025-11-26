@@ -39,6 +39,6 @@ The compose file mounts this directory as the Triton model repository.
 
 From inside the Triton project directory, run:
 
-    docker compose up -d
+    docker compose up -d 
 
 The Triton server will start and load your SBD model for inference.
