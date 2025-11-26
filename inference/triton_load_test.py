@@ -15,7 +15,7 @@ MODEL_NAME = "model"
 
 INPUT_NAME = "input__0"
 OUTPUT_NAME = "output__0"
-FEATURE_DIM = 27
+FEATURE_DIM = 28
 NETWORK_TIMEOUT = 60.0
 
 CONCURRENCY = 12                                   # fixed concurrency

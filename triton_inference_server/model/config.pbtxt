@@ -6,7 +6,7 @@ input [
   {
     name: "input__0"        # dont change
     data_type: TYPE_FP32
-    dims: [ 20 ]       # per-sample feature size; batch dim will be added by Triton
+    dims: [ 28 ]       # per-sample feature size; batch dim will be added by Triton
   }
 ]
 
