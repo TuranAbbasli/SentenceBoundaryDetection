@@ -17,6 +17,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+wsl_venv
 
 # Logs
 *.log
