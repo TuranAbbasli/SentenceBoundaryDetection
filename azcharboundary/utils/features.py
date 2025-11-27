@@ -383,7 +383,7 @@ class FeatureExtractor:
         if position >= len(text):
             return False
         
-        for i in range(position, len(text), 1):
+        for i in range(position, len(text) - 1, 1):
             if text[i] == " ":
                 if text[i + 1].isdigit():
                     return True
