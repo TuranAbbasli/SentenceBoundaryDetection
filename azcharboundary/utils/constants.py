@@ -2,10 +2,10 @@
 Constants used throughout the charboundary library.
 """
 
-AZ_ALPHABET = [
+ALPHABET = [
     "a", "b", "c", "ç", "d", "e", "ə", "f", "g", "ğ", "h", "x",
     "ı", "i", "j", "k", "q", "l", "m", "n", "o", "ö", "p", "r",
-    "s", "ş", "t", "u", "ü", "v", "y", "z"
+    "s", "ş", "t", "u", "ü", "v", "y", "z", "w"
 ]
 
 # Punctuation list, including unicode
