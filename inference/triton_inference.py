@@ -292,7 +292,7 @@ def test_inference() -> float:
 
         # CASE 1 — Legal contract, dates, abbreviations, mixed list styles
         text_case_1 = (
-            "Bu Müqavilə 12.05.2015-ci il tarixdə Bakı şəh., AZ0000, Nizami k., 15 ünvanında "
+            "Bu Müqavilə 12.05.2015-ci il tarixdə Bakı şəh., AZ0000, Nizami k., 15 ünvanında"
             "“Alpha Consulting” MMC (bundan sonra — “Podratçı”) və “Beta Group” ASC "
             "(bundan sonra — “Müştəri”) arasında imzalanmışdır. "
             "Müqavilə AR Mülki Məcəlləsinin 422.1-ci maddəsinə, həmçinin AR Konstitusiyasının 32-ci maddəsinə uyğun "

@@ -29,3 +29,6 @@ corpus.txt
 
 # generation
 generation
+
+#model 
+*.tl
