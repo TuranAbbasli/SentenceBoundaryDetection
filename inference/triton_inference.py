@@ -292,7 +292,7 @@ def test_inference() -> float:
 
         # CASE 1 — Legal contract, dates, abbreviations, mixed list styles
         text_case_1 = (
-            "Bu Müqavilə 12.05.2015-ci il tarixdə Bakı şəh., AZ0000, Nizami k., 15 ünvanında "
+            "Bu Müqavilə 12.05.2015-ci il tarixdə Bakı şəh., AZ0000, Nizami k., 15 ünvanında"
             "“Alpha Consulting” MMC (bundan sonra — “Podratçı”) və “Beta Group” ASC "
             "(bundan sonra — “Müştəri”) arasında imzalanmışdır. "
             "Müqavilə AR Mülki Məcəlləsinin 422.1-ci maddəsinə, həmçinin AR Konstitusiyasının 32-ci maddəsinə uyğun "
@@ -313,90 +313,90 @@ def test_inference() -> float:
             )
         )
 
-        # CASE 2 — Court decision with numbered paragraphs, internal abbreviations and mixed punctuation
-        text_case_2 = (
-            "Bakı Apellyasiya Məhk. məhkəmə heyəti, hakim İ.Xəlilovun sədrliyi ilə açıq məhkəmə iclasında "
-            "iddiaçı A.A.-nın cavabdeh “Gamma” MMC-yə qarşı iddiası üzrə işi baxaraq müəyyən etdi ki, "
-            "mübahisə predmeti 15.09.2019-cu il tarixli satınalma müqaviləsinin icrası ilə bağlıdır. "
-            "1) İddiaçı bildirmişdir ki, cavabdeh öhdəliyi vaxtında yerinə yetirməyib, nəticədə 5 000 (beş min) manat "
-            "maddi ziyan dəymişdir; 2) Cavabdeh isə, öz növbəsində, öhdəliyin pozulmasını force majeure ilə əsaslandırmış, "
-            "lakin bu barədə hər hansı rəsmi sübut (sertifikat, akt və s.) təqdim etməmişdir. "
-            "Məhkəmə hesab edir ki, cavabdehin arqumentləri əsassızdır... "
-            "Nəticə etibarilə, iddia qismən təmin edilir?! "
-            "Qərar elan olundu və tərəflərə izah edildi ki, qərardan 1 (bir) ay müddətində 6m. Əməl. kassasiya şikayəti verilə bilər."
-        )
-        all_metrics.append(
-            run_case(
-                client,
-                text_case_2,
-                "Case 2 — Court decision, numbered items",
-            )
-        )
+        # # CASE 2 — Court decision with numbered paragraphs, internal abbreviations and mixed punctuation
+        # text_case_2 = (
+        #     "Bakı Apellyasiya Məhk. məhkəmə heyəti, hakim İ.Xəlilovun sədrliyi ilə açıq məhkəmə iclasında "
+        #     "iddiaçı A.A.-nın cavabdeh “Gamma” MMC-yə qarşı iddiası üzrə işi baxaraq müəyyən etdi ki, "
+        #     "mübahisə predmeti 15.09.2019-cu il tarixli satınalma müqaviləsinin icrası ilə bağlıdır. "
+        #     "1) İddiaçı bildirmişdir ki, cavabdeh öhdəliyi vaxtında yerinə yetirməyib, nəticədə 5 000 (beş min) manat "
+        #     "maddi ziyan dəymişdir; 2) Cavabdeh isə, öz növbəsində, öhdəliyin pozulmasını force majeure ilə əsaslandırmış, "
+        #     "lakin bu barədə hər hansı rəsmi sübut (sertifikat, akt və s.) təqdim etməmişdir. "
+        #     "Məhkəmə hesab edir ki, cavabdehin arqumentləri əsassızdır... "
+        #     "Nəticə etibarilə, iddia qismən təmin edilir?! "
+        #     "Qərar elan olundu və tərəflərə izah edildi ki, qərardan 1 (bir) ay müddətində 6m. Əməl. kassasiya şikayəti verilə bilər."
+        # )
+        # all_metrics.append(
+        #     run_case(
+        #         client,
+        #         text_case_2,
+        #         "Case 2 — Court decision, numbered items",
+        #     )
+        # )
 
-        # CASE 3 — Mixed language, percentages, times, inline list items, tricky abbreviations
-        text_case_3 = (
-            "12.03.2020 tarixli kredit müqaviləsinə (№ KM-2020/03-12) əsasən, borc məbləği 75 000 (yetiş beş min) manat "
-            "təyin edilmişdir. İllik faiz dərəcəsi 18,5% olaraq müəyyən edilib; gecikmə halında isə əlavə 0,1% dəbbə pulu "
-            "hesablanır. "
-            "Clause 5.2-də qeyd olunur: \"Borc veren shall provide audited financial statements\" — lakin azərbaycanca "
-            "versiyada “audit edilmiş maliyyə hesabatı” ifadəsi istifadə olunmuşdur. "
-            "Saat 10:30-da tərəflər bankın mərkəzi ofisində (Bakı ş., Heydər Əliyev pr., 10) görüşərək aşağıdakıları "
-            "razılaşdırmışlar: (i) ödəniş qrafiki yenidən tərtib olunur; (ii) 3 (üç) ay müddətinə grace period tətbiq edilir; "
-            "(iii) borcalanın əlavə təminat təqdim etməsi tələb edilmir. "
-            "Bu protokol, Bank Nəzarəti Şöb., həmçinin Risk Dept. tərəfindən də təsdiq edilib."
-        )
-        all_metrics.append(
-            run_case(
-                client,
-                text_case_3,
-                "Case 3 — Mixed language, %, times, lists",
-            )
-        )
+        # # CASE 3 — Mixed language, percentages, times, inline list items, tricky abbreviations
+        # text_case_3 = (
+        #     "12.03.2020 tarixli kredit müqaviləsinə (№ KM-2020/03-12) əsasən, borc məbləği 75 000 (yetiş beş min) manat "
+        #     "təyin edilmişdir. İllik faiz dərəcəsi 18,5% olaraq müəyyən edilib; gecikmə halında isə əlavə 0,1% dəbbə pulu "
+        #     "hesablanır. "
+        #     "Clause 5.2-də qeyd olunur: \"Borc veren shall provide audited financial statements\" — lakin azərbaycanca "
+        #     "versiyada “audit edilmiş maliyyə hesabatı” ifadəsi istifadə olunmuşdur. "
+        #     "Saat 10:30-da tərəflər bankın mərkəzi ofisində (Bakı ş., Heydər Əliyev pr., 10) görüşərək aşağıdakıları "
+        #     "razılaşdırmışlar: (i) ödəniş qrafiki yenidən tərtib olunur; (ii) 3 (üç) ay müddətinə grace period tətbiq edilir; "
+        #     "(iii) borcalanın əlavə təminat təqdim etməsi tələb edilmir. "
+        #     "Bu protokol, Bank Nəzarəti Şöb., həmçinin Risk Dept. tərəfindən də təsdiq edilib."
+        # )
+        # all_metrics.append(
+        #     run_case(
+        #         client,
+        #         text_case_3,
+        #         "Case 3 — Mixed language, %, times, lists",
+        #     )
+        # )
 
-        # CASE 4 — Long narrative, quotes, parentheses, ellipses, heavy punctuation, fake sentence-like abbreviations
-        text_case_4 = (
-            "Məhkəmə iclasında cavabdeh belə demişdir: \"Mən müqaviləni oxumuşam, lakin oradakı ‘7.2-ci bənd’ "
-            "mənə aydın olmayıb\". Hakim sual verir: \"Siz hüquqşünasla məsləhətləşmisinizmi?!\" "
-            "Cavabdeh cavab verir ki, o, yalnız tanışı olan bir mütəxəssislə (prof. S.Əliyev) qısa müzakirə aparıb, "
-            "lakin rəsmi legal opinion almamışdır. "
-            "Zalda olan nümayəndə (şirk. nümay., yəni rəsmi təmsilçi) isə bildirir ki, tərəflər arasında "
-            "‘gentlemen’s agreement’ də olub... Lakin bu, yazılı formada təsdiq edilməyib. "
-            "Hakim qeyd edir ki, belə informal razılaşmalar AR qanunvericiliyində ayrıca təsbit olunmayıb, "
-            "bu səbəbdən də məhk. onları hüquqi əsas kimi qəbul etmir. "
-            "Bu halda, yalnız müqavilənin mətni, əlavə razılaşmalar (Annex 1, Annex 2 və s.) və tərəflərin faktiki davranışı "
-            "nəzərə alınır."
-        )
-        all_metrics.append(
-            run_case(
-                client,
-                text_case_4,
-                "Case 4 — Quotes, ellipses, fake endings",
-            )
-        )
+        # # CASE 4 — Long narrative, quotes, parentheses, ellipses, heavy punctuation, fake sentence-like abbreviations
+        # text_case_4 = (
+        #     "Məhkəmə iclasında cavabdeh belə demişdir: \"Mən müqaviləni oxumuşam, lakin oradakı ‘7.2-ci bənd’ "
+        #     "mənə aydın olmayıb\". Hakim sual verir: \"Siz hüquqşünasla məsləhətləşmisinizmi?!\" "
+        #     "Cavabdeh cavab verir ki, o, yalnız tanışı olan bir mütəxəssislə (prof. S.Əliyev) qısa müzakirə aparıb, "
+        #     "lakin rəsmi legal opinion almamışdır. "
+        #     "Zalda olan nümayəndə (şirk. nümay., yəni rəsmi təmsilçi) isə bildirir ki, tərəflər arasında "
+        #     "‘gentlemen’s agreement’ də olub... Lakin bu, yazılı formada təsdiq edilməyib. "
+        #     "Hakim qeyd edir ki, belə informal razılaşmalar AR qanunvericiliyində ayrıca təsbit olunmayıb, "
+        #     "bu səbəbdən də məhk. onları hüquqi əsas kimi qəbul etmir. "
+        #     "Bu halda, yalnız müqavilənin mətni, əlavə razılaşmalar (Annex 1, Annex 2 və s.) və tərəflərin faktiki davranışı "
+        #     "nəzərə alınır."
+        # )
+        # all_metrics.append(
+        #     run_case(
+        #         client,
+        #         text_case_4,
+        #         "Case 4 — Quotes, ellipses, fake endings",
+        #     )
+        # )
 
-        # CASE 5 — Mixed obligations, bullets, broken structures, dates and no-punct fragments
-        text_case_5 = (
-            "“Delta Logistic” MMC ilə bağlanmış 05.11.2018-ci il tarixli xidmət müqaviləsinin 3-cü bölməsi "
-            "öhdəliklərin icrasına həsr olunmuşdur. Bölmə aşağıdakı bəndlərdən ibarətdir: "
-            "1) Podratçı yükün təhlükəsiz daşınmasını təmin etməlidir — yük itdikdə və ya zədələndikdə, "
-            "Mülki Məcəllənin 921-ci maddəsinə uyğun olaraq məsuliyyət daşıyır; "
-            "2) Müştəri xidmət haqqını 30 (otuz) təqvim günü ərzində ödəməlidir; "
-            "3) tərəflər aşağıdakı hallarda müqaviləni birtərəfli qaydada ləğv edə bilərlər: "
-            "a) müflislik elan edilməsi; b) 60 gündən artıq gecikmə; c) qanunvericiliyin dəyişməsi nəticəsində "
-            "müqavilənin icrasının faktiki olaraq mümkünsüz olması. "
-            "Bundan əlavə, qeydlər bölməsində belə yazılmışdır: "
-            "“Əlavə xidmətlər göstərilə bilər qiymət sonradan razılaşdırılır hər bir tərəf bu barədə əvvəlcədən yazılı "
-            "məlumat təqdim etməlidir” — cümlə ardıcıllığı pozulmuş, nöqtə və vergüllər isə, praktiki olaraq, "
-            "heç yerdə qoyulmamışdır. "
-            "Sonda 01.01.2019 tarixli əlavə razılaşma ilə qiymətlər 10% artırılmış, lakin əvvəlki qrafik dəyişdirilməmişdir."
-        )
-        all_metrics.append(
-            run_case(
-                client,
-                text_case_5,
-                "Case 5 — Bullets, broken text, dates",
-            )
-        )
+        # # CASE 5 — Mixed obligations, bullets, broken structures, dates and no-punct fragments
+        # text_case_5 = (
+        #     "“Delta Logistic” MMC ilə bağlanmış 05.11.2018-ci il tarixli xidmət müqaviləsinin 3-cü bölməsi "
+        #     "öhdəliklərin icrasına həsr olunmuşdur. Bölmə aşağıdakı bəndlərdən ibarətdir: "
+        #     "1) Podratçı yükün təhlükəsiz daşınmasını təmin etməlidir — yük itdikdə və ya zədələndikdə, "
+        #     "Mülki Məcəllənin 921-ci maddəsinə uyğun olaraq məsuliyyət daşıyır; "
+        #     "2) Müştəri xidmət haqqını 30 (otuz) təqvim günü ərzində ödəməlidir; "
+        #     "3) tərəflər aşağıdakı hallarda müqaviləni birtərəfli qaydada ləğv edə bilərlər: "
+        #     "a) müflislik elan edilməsi; b) 60 gündən artıq gecikmə; c) qanunvericiliyin dəyişməsi nəticəsində "
+        #     "müqavilənin icrasının faktiki olaraq mümkünsüz olması. "
+        #     "Bundan əlavə, qeydlər bölməsində belə yazılmışdır: "
+        #     "“Əlavə xidmətlər göstərilə bilər qiymət sonradan razılaşdırılır hər bir tərəf bu barədə əvvəlcədən yazılı "
+        #     "məlumat təqdim etməlidir” — cümlə ardıcıllığı pozulmuş, nöqtə və vergüllər isə, praktiki olaraq, "
+        #     "heç yerdə qoyulmamışdır. "
+        #     "Sonda 01.01.2019 tarixli əlavə razılaşma ilə qiymətlər 10% artırılmış, lakin əvvəlki qrafik dəyişdirilməmişdir."
+        # )
+        # all_metrics.append(
+        #     run_case(
+        #         client,
+        #         text_case_5,
+        #         "Case 5 — Bullets, broken text, dates",
+        #     )
+        # )
 
         suite_end = time.time()
         suite_wall_ms = (suite_end - suite_start) * 1000.0

@@ -5,7 +5,7 @@ Character encoding functionality for the charboundary library.
 from typing import Dict, Protocol
 
 from azcharboundary.utils.constants import (
-    AZ_ALPHABET,
+    ALPHABET,
     PUNCTUATION_CHAR_LIST,
     WS_CHAR_LIST,
     TERMINAL_SENTENCE_CHAR_LIST,
@@ -45,7 +45,7 @@ class CharacterEncoder:
     def __init__(self):
         """Initialize the CharacterEncoder with an empty cache."""
         self.cache: Dict[str, int] = {}
-        self.az_map = {char: idx + 1 for idx, char in enumerate(AZ_ALPHABET)}
+        self.az_map = {char: idx + 1 for idx, char in enumerate(ALPHABET)}
 
     def encode(self, char: str) -> int:
         """

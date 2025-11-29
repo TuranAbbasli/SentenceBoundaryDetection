@@ -187,7 +187,7 @@ def main(data_path: Path, save_path: str = "./") -> None:
 
 
 if __name__ == "__main__":
-    data_path = Path("azcharboundary/data/final.jsonl")
+    data_path = Path("data/final.jsonl")
     save_path = "azcharboundary/trained_models/v3/checkpoint.tl"
 
     main(data_path, save_path)
