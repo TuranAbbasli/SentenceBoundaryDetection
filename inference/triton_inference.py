@@ -1,8 +1,13 @@
+import sys
 import time
+from pathlib import Path
 from typing import List, Optional, Tuple, Dict
 
 import numpy as np
 import tritonclient.grpc as grpcclient
+
+# Add parent directory to path to import azcharboundary
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from azcharboundary.utils.constants import TERMINAL_SENTENCE_CHAR_LIST, SENTENCE_TAG
 from azcharboundary.utils.features import FeatureExtractor

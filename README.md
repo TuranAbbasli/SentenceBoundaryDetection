@@ -1,10 +1,10 @@
 # Sentence Boundary Detection
 
-This project implements a custom Sentence Boundary Detection system using the structure of the charboundary library.
+This project implements a custom Sentence Boundary Detection system using the structure of the CharBoundary library.
 
 ## Training
 
-Training is handled through main.py. You can adjust hyperparameters directly inside the training call:
+Training is handled through train.py. You can adjust hyperparameters directly inside the training call:
 
     training_metrics = segmenter.train(
         data=train_set,
