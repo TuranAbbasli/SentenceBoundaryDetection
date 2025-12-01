@@ -92,10 +92,10 @@ def postprocessing(
     text: str,
     positions: list[int],
     response: Optional[grpcclient.InferResult],
-) -> tuple[str, int]:
-    """Insert sentence boundary tags based on model predictions."""
+) -> list[str]:
+    """Split text into sentences based on model predictions."""
     if response is None or not positions:
-        return text, 0
+        return [text] if text.strip() else []
 
     probs = response.as_numpy(OUTPUT_NAME)
     if probs is None:
@@ -106,14 +106,23 @@ def postprocessing(
     labels_np = (probs[:, 1] > probs[:, 0]).astype(np.int32)
     labels: list[int] = labels_np.tolist()
 
-    result = list(text)
-
-    tag_shift = 1
-    boundary_count = 0
-    for prediction, terminal_idx in zip(labels, positions):
-        if prediction:
-            result.insert(terminal_idx + tag_shift, SENTENCE_TAG)
-            tag_shift += 1
-            boundary_count += 1
-
-    return "".join(result), boundary_count
+    # Collect boundary positions where predictions are positive
+    boundary_positions = [pos for pos, label in zip(positions, labels) if label]
+    
+    # Split text at boundaries
+    sentences = []
+    start = 0
+    for boundary_pos in boundary_positions:
+        # Include the terminal character in the sentence
+        sentence = text[start:boundary_pos + 1].strip()
+        if sentence:
+            sentences.append(sentence)
+        start = boundary_pos + 1
+    
+    # Add remaining text as last sentence
+    if start < len(text):
+        remaining = text[start:].strip()
+        if remaining:
+            sentences.append(remaining)
+    
+    return sentences

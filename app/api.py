@@ -77,7 +77,7 @@ async def segment_text(text: str):
     """
     Segment input text into sentences.
     
-    Returns the text with SENTENCE_TAG markers inserted at predicted boundaries.
+    Returns a list of detected sentences.
     """
     triton_client = get_triton_client()
     if triton_client is None:
@@ -90,10 +90,10 @@ async def segment_text(text: str):
         # Inference
         if inputs is None or outputs is None or not positions:
             # No terminal characters found
+            sentences = [text.strip()] if text.strip() else []
             return SegmentationResponse(
-                original_text=text,
-                segmented_text=text,
-                num_boundaries=0,
+                sentences=sentences,
+                num_sentences=len(sentences),
             )
 
         response = triton_client.infer(
@@ -105,12 +105,11 @@ async def segment_text(text: str):
         )
 
         # Postprocessing
-        segmented_text, boundary_count = postprocessing(text, positions, response)
+        sentences = postprocessing(text, positions, response)
 
         return SegmentationResponse(
-            original_text=text,
-            segmented_text=segmented_text,
-            num_boundaries=boundary_count,
+            sentences=sentences,
+            num_sentences=len(sentences),
         )
 
     except Exception as e:
