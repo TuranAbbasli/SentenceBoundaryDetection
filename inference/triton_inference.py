@@ -72,7 +72,7 @@ def preprocessing(
     )
 
     features_np = np.asarray(terminal_features, dtype=np.float32)
-    print(features_np)
+    print(f'Feature matrix:\n{features_np}')
 
     # Ensure features are 2D (N, FEATURE_DIM)
     if features_np.ndim == 1:
@@ -130,9 +130,9 @@ def postprocessing(
     labels_np = (probs[:, 1] > probs[:, 0]).astype(np.int32)
     labels: List[int] = labels_np.tolist()
 
-    print(positions)
-    print(probs)
-    print(labels)
+    print(f'\nPositions:\n{positions}')
+    print(f'\nProbabilities:\n{probs}')
+    print(f'\nLabels:\n{labels}')
 
     result = list(text)
 
