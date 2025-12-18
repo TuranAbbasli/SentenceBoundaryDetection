@@ -508,9 +508,10 @@ class FeatureExtractor:
 
         # Initialize features matrix
         num_positions = len(position_indices)
-        features = np.full(
-            (num_positions, feature_size), -3, dtype=np.int16
-        )  # Fill with whitespace placeholder
+        
+        features = np.random.choice(
+            self.encoder.az_values, size=(num_positions, feature_size)
+        )
 
         # Process each position
         for i, pos in enumerate(position_indices):
