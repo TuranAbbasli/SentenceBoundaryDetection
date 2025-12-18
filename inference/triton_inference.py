@@ -72,6 +72,7 @@ def preprocessing(
     )
 
     features_np = np.asarray(terminal_features, dtype=np.float32)
+    print(features_np)
 
     # Ensure features are 2D (N, FEATURE_DIM)
     if features_np.ndim == 1:

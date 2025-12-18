@@ -12,7 +12,7 @@ Training is handled through train.py. You can adjust hyperparameters directly in
         sample_rate=0.001,
         left_window=9,
         right_window=9,
-        threshold=0.8,
+        threshold=0.75,
         use_feature_selection=False,
         max_features=20,
     )
