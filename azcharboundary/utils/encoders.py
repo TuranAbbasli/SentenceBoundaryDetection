@@ -1,7 +1,7 @@
 """
 Character encoding functionality for the charboundary library.
 """
-
+import random
 from typing import Dict, Protocol
 
 from azcharboundary.utils.constants import (
@@ -46,6 +46,7 @@ class CharacterEncoder:
         """Initialize the CharacterEncoder with an empty cache."""
         self.cache: Dict[str, int] = {}
         self.az_map = {char: idx + 1 for idx, char in enumerate(ALPHABET)}
+        self.az_values = list(self.az_map.values())
 
     def encode(self, char: str) -> int:
         """
@@ -67,7 +68,12 @@ class CharacterEncoder:
             if char == 'İ':  # special case: 'İ'.lower() != 'i'
                 value = self.az_map['i']
             else:
-                value = self.az_map[char.lower()]
+                try:
+                    value = self.az_map[char.lower()]
+                except KeyError:
+                    value = random.choice(self.az_values)
+
+                    
         elif char.isdigit():
             value = 0
         elif char in TERMINAL_SENTENCE_CHAR_LIST:
