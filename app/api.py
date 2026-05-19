@@ -5,7 +5,7 @@ import tritonclient.grpc as grpcclient
 from fastapi import FastAPI, HTTPException
 
 from .config import TRITON_URL, MODEL_NAME, NETWORK_TIMEOUT
-from .models import SegmentationResponse
+from .models import SegmentationResponse, SegmentationRequest
 from .services import (
     get_triton_client,
     set_triton_client,
@@ -73,12 +73,13 @@ app = FastAPI(
 
 
 @app.post("/segment", response_model=SegmentationResponse)
-async def segment_text(text: str):
+async def segment_text(request: SegmentationRequest):
     """
     Segment input text into sentences.
     
     Returns a list of detected sentences.
     """
+    text = request.text
     triton_client = get_triton_client()
     if triton_client is None:
         raise HTTPException(status_code=503, detail="Triton client not initialized")
