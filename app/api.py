@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from contextlib import asynccontextmanager
 
@@ -97,7 +98,8 @@ async def segment_text(request: SegmentationRequest):
                 num_sentences=len(sentences),
             )
 
-        response = triton_client.infer(
+        response = await asyncio.to_thread(
+            triton_client.infer,
             model_name=MODEL_NAME,
             inputs=inputs,
             outputs=outputs,
