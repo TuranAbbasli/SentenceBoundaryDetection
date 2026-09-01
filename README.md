@@ -21,25 +21,54 @@ Modify these parameters to train a new model. Window sizes, thresholds, sample r
 
 ## Inference with NVIDIA Triton
 
-Inference is served using NVIDIA Triton Inference Server, which accelerates execution with GPU or CPU support. Docker Compose is used to run the server. Triton image version: 25.11 
+Inference is served by NVIDIA Triton Inference Server, with a FastAPI service in front of it.
+Both run under Docker Compose. Triton image version: 25.11
 
 ### Folder Structure
 
-Your model should be placed inside a directory named model:
+The Triton model repository lives in `triton_inference_server/`:
 
     triton_inference_server/
-    ├─ docker-compose.yml
     └─ model/
        ├─ config.pbtxt
        └─ 1
-           └─ checkpoint.tl
+           └─ checkpoint.zip   # unpacked to checkpoint.tl by the model-init service
 
-The compose file mounts this directory as the Triton model repository.
+`docker-compose.yml` (repo root) mounts `triton_inference_server/` as the model repository.
 
-### Starting the Server
+### Starting Everything
 
-From inside the Triton project directory, run:
+From the repo root:
 
-    docker compose up -d 
+    docker compose up -d --build
 
-The Triton server will start and load your SBD model for inference.
+This runs three services in order:
+
+1. `model-init` — unpacks `checkpoint.zip` into `checkpoint.tl` (one-off, idempotent;
+   `*.tl` is gitignored so a fresh clone only has the zip)
+2. `triton` — loads the model, gRPC on host port 8001
+3. `api` — FastAPI, host port 8000, waits until Triton reports healthy
+
+Then segment text:
+
+    curl -X POST http://localhost:8000/segment \
+      -H 'Content-Type: application/json' \
+      -d '{"text": "Bu birinci cümlədir. Bu isə ikinci cümlədir."}'
+
+Logs and teardown:
+
+    docker compose logs -f api
+    docker compose down
+
+### Running the API outside Docker
+
+`TRITON_URL` defaults to `localhost:8001`, so with only Triton in Docker:
+
+    docker compose up -d triton
+    uv venv --python 3.11 && uv pip install -r requirements.txt
+    uv run uvicorn app.api:app --host 0.0.0.0 --port 8000
+
+### GPU
+
+The compose file runs Triton on CPU by default. On a GPU host, uncomment the `deploy:`
+block under the `triton` service (requires the NVIDIA Container Toolkit).
