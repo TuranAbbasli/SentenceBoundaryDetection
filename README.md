@@ -55,6 +55,17 @@ Then segment text:
       -H 'Content-Type: application/json' \
       -d '{"text": "Bu birinci cümlədir. Bu isə ikinci cümlədir."}'
 
+### Endpoints
+
+| Endpoint | Purpose |
+|---|---|
+| `POST /segment` | Segment text into sentences |
+| `GET /health` | Liveness — 200 whenever the process answers; ignores Triton |
+| `GET /ready` | Readiness — 200 only if Triton is reachable and the model is loaded, else 503 |
+
+`docker compose ps` reports `api` as `healthy` based on `/ready`, so a Triton
+outage shows up as `unhealthy` without the container being restarted.
+
 Logs and teardown:
 
     docker compose logs -f api
