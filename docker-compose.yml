@@ -54,8 +54,10 @@ services:
       test: ["CMD-SHELL", "curl -sf http://localhost:8000/v2/health/ready || exit 1"]
       interval: 10s
       timeout: 5s
-      retries: 60
-      start_period: 60s
+      # start_period covers the ~172MB treelite model load; retries then bound
+      # how long a genuinely broken Triton can stall `up` (12 x 10s = 2 min).
+      retries: 12
+      start_period: 120s
     restart: unless-stopped
     # Uncomment on a GPU host (needs the NVIDIA Container Toolkit):
     # deploy:
@@ -81,4 +83,13 @@ services:
       # Service name on the compose network, not localhost -- the API is its own container now.
       - TRITON_URL=triton:8001
       - MODEL_NAME=model
+    healthcheck:
+      # python, not curl: python:3.11-slim ships no curl. Hits /ready (deep check:
+      # Triton reachable + model loaded) on the container's own loopback -- the
+      # published port is irrelevant to healthchecks.
+      test: ["CMD-SHELL", "python -c \"import sys,urllib.request as u; sys.exit(0 if u.urlopen('http://localhost:8000/ready', timeout=4).status == 200 else 1)\" 2>/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 20s
     restart: unless-stopped
