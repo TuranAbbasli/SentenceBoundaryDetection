@@ -72,6 +72,46 @@ app = FastAPI(
 )
 
 
+@app.get("/health")
+async def health() -> dict[str, str]:
+    """
+    Liveness probe: confirms the process is answering requests.
+
+    Does not touch Triton, so it stays green during a Triton outage.
+
+    Returns:
+        dict[str, str]: Static status payload.
+    """
+    return {"status": "ok"}
+
+
+@app.get("/ready")
+async def ready() -> dict[str, str]:
+    """
+    Readiness probe: confirms Triton is reachable and the model is loaded.
+
+    Returns:
+        dict[str, str]: Status, model name, and Triton URL when servable.
+
+    Raises:
+        HTTPException: 503 if the Triton client is missing, Triton is
+                       unreachable, or the model is not ready.
+    """
+    client = get_triton_client()
+    if client is None:
+        raise HTTPException(status_code=503, detail="Triton client not initialized")
+
+    try:
+        model_ready = client.is_model_ready(MODEL_NAME)
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"Triton unreachable: {e}")
+
+    if not model_ready:
+        raise HTTPException(status_code=503, detail=f"Model '{MODEL_NAME}' is not ready")
+
+    return {"status": "ready", "model": MODEL_NAME, "triton": TRITON_URL}
+
+
 @app.post("/segment", response_model=SegmentationResponse)
 async def segment_text(request: SegmentationRequest):
     """
