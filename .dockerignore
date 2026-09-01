@@ -1,0 +1,14 @@
+.git
+.gitignore
+.venv
+**/__pycache__
+**/.DS_Store
+*.log
+# Not needed by the API: Triton loads the checkpoint from a bind mount,
+# and the training artifacts are large.
+azcharboundary/trained_models
+triton_inference_server
+inference
+main.py
+requirements.txt
+README.md

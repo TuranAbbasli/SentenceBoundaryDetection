@@ -1,0 +1,12 @@
+# Runtime deps for the FastAPI service only (see requirements.txt for training).
+# The API path imports numpy + azcharboundary.utils.{constants,features,encoders},
+# none of which pull in sklearn/treelite/cuda.
+fastapi==0.115.6
+uvicorn==0.34.0
+pydantic==2.13.5
+numpy==1.26.4
+tritonclient[grpc]==2.62.0
+grpcio==1.67.1
+protobuf==5.29.5
+python-rapidjson==1.22
+urllib3==2.5.0
