@@ -32,9 +32,23 @@ The Triton model repository lives in `triton_inference_server/`:
     └─ model/
        ├─ config.pbtxt
        └─ 1
-           └─ checkpoint.zip   # unpacked to checkpoint.tl by the model-init service
+           ├─ checkpoint.zip   # committed
+           └─ checkpoint.tl    # unzip this yourself, once per host
 
 `docker-compose.yml` (repo root) mounts `triton_inference_server/` as the model repository.
+
+### One-off: unpack the checkpoint
+
+`config.pbtxt` loads `checkpoint.tl`, but `*.tl` is gitignored — it is 172MB, over
+GitHub's 100MB file limit — so a fresh clone carries only the zip. **Do this once per
+host, before the first `docker compose up`:**
+
+    cd triton_inference_server/model/1
+    unzip checkpoint.zip
+    cd -
+
+Skip it and Triton starts but fails to load the model, with the reason buried in
+`docker compose logs triton`.
 
 ### Starting Everything
 
@@ -42,12 +56,10 @@ From the repo root:
 
     docker compose up -d --build
 
-This runs three services in order:
+This runs two services:
 
-1. `model-init` — unpacks `checkpoint.zip` into `checkpoint.tl` (one-off, idempotent;
-   `*.tl` is gitignored so a fresh clone only has the zip)
-2. `triton` — loads the model, gRPC on host port 8001
-3. `api` — FastAPI, host port 8000, waits until Triton reports healthy
+1. `triton` — loads the model, gRPC on host port 8001
+2. `api` — FastAPI, host port 8000, waits until Triton reports healthy
 
 Then segment text:
 

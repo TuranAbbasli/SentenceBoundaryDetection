@@ -1,39 +1,9 @@
 name: sbd
 
 services:
-  # One-shot: unpacks model/1/checkpoint.zip -> checkpoint.tl, which config.pbtxt
-  # loads. *.tl is gitignored, so a fresh clone only carries the zip.
-  # Idempotent -- no-ops if checkpoint.tl already exists.
-  model-init:
-    image: python:3.11-slim
-    volumes:
-      - ./triton_inference_server/model:/model
-    command:
-      - python
-      - -c
-      - |
-        import os, pathlib, zipfile
-        d = pathlib.Path("/model/1")
-        tl = d / "checkpoint.tl"
-        if tl.exists():
-            print(f"checkpoint.tl already present ({tl.stat().st_size} bytes)")
-        else:
-            print("extracting checkpoint.zip ...")
-            with zipfile.ZipFile(d / "checkpoint.zip") as z:
-                z.extractall(d)
-            st = d.stat()
-            try:  # hand ownership to whoever owns the host directory
-                os.chown(tl, st.st_uid, st.st_gid)
-            except (PermissionError, OSError):
-                pass
-            print(f"extracted checkpoint.tl ({tl.stat().st_size} bytes)")
-
   triton:
     image: nvcr.io/nvidia/tritonserver:25.11-py3
     container_name: triton_sbd_server
-    depends_on:
-      model-init:
-        condition: service_completed_successfully
     ports:
       - "8001:8001"  # gRPC -- only needed for host-side scripts (inference/*.py); the api service uses the internal network
       # - "8000:8000"  # Triton HTTP -- leave closed, the api service owns host 8000
